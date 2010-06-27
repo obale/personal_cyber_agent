@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"> 
+
+        <properties>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <eclipse.dependency>true</eclipse.dependency>
+        </properties>
+
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>pca</groupId>
+        <artifactId>pca</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <packaging>pom</packaging>
+        <url>http://cyberagent.networld.to</url>
+        <name>Networld Personal Cyber Agent</name>
+        <description>Personal Cyber Agent is an application that is
+                responsible for the work that normally are performend by a
+                secretary.</description>
+
+        <organization>
+                <name>Networld</name>
+                <url>http://networld.to</url>
+        </organization>
+
+        <licenses>
+                <license>
+                        <name>GPL-3</name>
+                        <url>LICENSE.txt</url>
+                </license>
+        </licenses>
+
+        <developers>
+                <developer>
+                        <id>Alex Oberhauser</id>
+                        <name>Alex Oberhauser</name>
+                        <email>oberhauseralex@networld.to</email>
+                        <url>http://devnull.networld.to/foaf.rdf#me</url>
+                        <organization>Networld</organization>
+                        <organizationUrl>http://networld.to</organizationUrl>
+                        <roles>
+                                <role>architect</role>
+                                <role>developer</role>
+                        </roles>
+                </developer>
+        </developers>
+
+        <modules>
+                <module>pca-communication</module>
+                <module>pca-reasoning</module>
+                <module>pca-core</module>
+        </modules>
+
+        <reporting>
+                <outputDirectory>target/site</outputDirectory>
+        </reporting>
+
+        <dependencyManagement>
+                <dependencies>
+                        <!-- pca projects -->
+                        <dependency>
+                                <groupId>pca</groupId>
+                                <artifactId>pca-reasoning</artifactId>
+                                <version>0.1-SNAPSHOT</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>pca</groupId>
+                                <artifactId>pca-communication</artifactId>
+                                <version>0.1-SNAPSHOT</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>pca</groupId>
+                                <artifactId>pca-core</artifactId>
+                                <version>0.1-SNAPSHOT</version>
+                        </dependency>
+                </dependencies>
+        </dependencyManagement>
+
+        <build>
+                <plugins>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-compiler-plugin</artifactId>
+                                <version>2.0.2</version>
+                                <configuration>
+                                        <source>1.6</source>
+                                        <target>1.6</target>
+                                </configuration>
+                        </plugin>
+                </plugins>
+        </build>
+
+</project>

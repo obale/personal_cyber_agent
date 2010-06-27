@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"> 
+
+        <properties>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        </properties>
+
+        <parent>
+                <groupId>pca</groupId>
+                <artifactId>pca</artifactId>
+                <version>0.1-SNAPSHOT</version>
+        </parent>
+
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>to.networld.cyberagent</groupId>
+        <packaging>jar</packaging>
+        <version>0.1-SNAPSHOT</version>
+        <artifactId>pca-core</artifactId>
+        <url>http://cyberagent.networld.to</url>
+        <name>Networld Personal Cyber Agent - Core</name>
+
+        <dependencies>
+                <dependency>
+                        <groupId>pca</groupId>
+                        <artifactId>pca-communication</artifactId>
+                        <version>0.1-SNAPSHOT</version>
+                </dependency>
+        </dependencies>
+
+        <build>
+                <defaultGoal>package</defaultGoal>
+                <plugins>
+                        <plugin>
+                                <artifactId>maven-jar-plugin</artifactId>
+                                <configuration>
+                                        <archive>
+                                                <manifest>
+                                                        <addClasspath>true</addClasspath>
+                                                        <mainClass>to.networld.cyberagent.Main</mainClass>
+                                                </manifest>
+                                        </archive>
+                                </configuration>
+                        </plugin>
+                        <plugin>
+                                <artifactId>maven-dependency-plugin</artifactId>
+                                <executions>
+                                        <execution>
+                                                <id>copy-dependencies</id>
+                                                <phase>package</phase>
+                                                <goals>
+                                                        <goal>copy-dependencies</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                        </plugin>
+                </plugins>
+                <resources>
+                        <resource>
+                                <directory>${basedir}/target/dependency</directory>
+                        </resource>
+                </resources>
+        </build>
+
+</project>
