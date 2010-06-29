@@ -31,7 +31,9 @@
         </licenses>
 
         <scm>
-                <developerConnection>scm:git:file:///home/obale/pca</developerConnection>
+                <tag>HEAD</tag>
+                <connection>scm:git:git://networld.to/var/scm/ai/pca.git</connection>
+                <developerConnection>scm:git:ssh://${user}@networld.to:64446/var/scm/ai/pca.git</developerConnection>
         </scm>
 
         <developers>
@@ -54,6 +56,11 @@
                 <module>pca-reasoning</module>
                 <module>pca-core</module>
         </modules>
+
+        <issueManagement>
+                <system>Bugzilla</system>
+                <url>https://bugs.localnet.xy/</url>
+        </issueManagement>
 
         <reporting>
                 <outputDirectory>target/site</outputDirectory>
@@ -95,11 +102,14 @@
                                 <groupId>org.apache.maven.plugins</groupId>
                                 <artifactId>maven-scm-plugin</artifactId>
                                 <version>1.3</version>
+                                <configuration>
+                                        <connectionType>developerConnection</connectionType>
+                                </configuration>
                                 <dependencies>
                                         <dependency>
                                                 <groupId>org.apache.maven.scm</groupId>
                                                 <artifactId>maven-scm-provider-gitexe</artifactId>
-                                                <version>1.2</version>
+                                                <version>1.3</version>
                                         </dependency>
                                 </dependencies>
                         </plugin>
