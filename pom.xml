@@ -33,7 +33,7 @@
         <scm>
                 <tag>HEAD</tag>
                 <connection>scm:git:git://networld.to/var/scm/ai/pca.git</connection>
-                <developerConnection>scm:git:ssh://${user}@networld.to:64446/var/scm/ai/pca.git</developerConnection>
+                <developerConnection>scm:git:ssh://${env.USER}@networld.to:64446/var/scm/ai/pca.git</developerConnection>
         </scm>
 
         <developers>
