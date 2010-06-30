@@ -8,7 +8,7 @@
         </properties>
 
         <modelVersion>4.0.0</modelVersion>
-        <groupId>pca</groupId>
+        <groupId>to.networld.cyberagent</groupId>
         <artifactId>pca</artifactId>
         <version>0.1-SNAPSHOT</version>
         <packaging>pom</packaging>
