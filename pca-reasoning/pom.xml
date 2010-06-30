@@ -12,7 +12,7 @@
         </parent>
 
         <modelVersion>4.0.0</modelVersion>
-        <groupId>pca</groupId>
+        <groupId>to.networld.cyberagent</groupId>
         <packaging>jar</packaging>
         <version>0.1-SNAPSHOT</version>
         <artifactId>pca-reasoning</artifactId>
