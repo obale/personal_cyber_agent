@@ -1,0 +1,8 @@
+# Generate SSL certificate
+keytool -genkey -alias sslserver -keyalg RSA -keypass 1234567890 -storepass 1234567890 -keystore keystore.jks
+
+# Export SSL Certificate for trust database
+keytool -export -alias sslserver -storepass 1234567890 -file sslserver.cer -keystore keystore.jk
+
+# Import trusted CA certificate
+keytool -import -v -trustcacerts -alias sslserver -file sslserver.cer -keystore cacerts.jks -keypass 1234567890 -storepass 1234567890

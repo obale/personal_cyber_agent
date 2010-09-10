@@ -66,6 +66,7 @@
         <modules>
                 <module>pca-communication</module>
                 <module>pca-reasoning</module>
+                <module>pca-monitoring</module>
                 <module>pca-core</module>
         </modules>
 
@@ -89,6 +90,11 @@
                         <dependency>
                                 <groupId>pca</groupId>
                                 <artifactId>pca-communication</artifactId>
+                                <version>0.1-SNAPSHOT</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>pca</groupId>
+                                <artifactId>pca-monitoring</artifactId>
                                 <version>0.1-SNAPSHOT</version>
                         </dependency>
                         <dependency>
