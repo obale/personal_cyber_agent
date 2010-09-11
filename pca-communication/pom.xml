@@ -21,11 +21,6 @@
 
         <dependencies>
                 <dependency>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                        <version>4.5</version>
-                </dependency>
-                <dependency>
                         <groupId>to.networld.cyberagent</groupId>
                         <artifactId>pca-monitoring</artifactId>
                         <version>0.1-SNAPSHOT</version>

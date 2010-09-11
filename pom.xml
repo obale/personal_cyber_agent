@@ -83,22 +83,22 @@
                 <dependencies>
                         <!-- pca projects -->
                         <dependency>
-                                <groupId>pca</groupId>
+                                <groupId>to.networld.cyberagent</groupId>
                                 <artifactId>pca-reasoning</artifactId>
                                 <version>0.1-SNAPSHOT</version>
                         </dependency>
                         <dependency>
-                                <groupId>pca</groupId>
+                                <groupId>to.networld.cyberagent</groupId>
                                 <artifactId>pca-communication</artifactId>
                                 <version>0.1-SNAPSHOT</version>
                         </dependency>
                         <dependency>
-                                <groupId>pca</groupId>
+                                <groupId>to.networld.cyberagent</groupId>
                                 <artifactId>pca-monitoring</artifactId>
                                 <version>0.1-SNAPSHOT</version>
                         </dependency>
                         <dependency>
-                                <groupId>pca</groupId>
+                                <groupId>to.networld.cyberagent</groupId>
                                 <artifactId>pca-core</artifactId>
                                 <version>0.1-SNAPSHOT</version>
                         </dependency>

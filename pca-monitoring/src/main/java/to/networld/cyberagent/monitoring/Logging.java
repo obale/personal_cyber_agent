@@ -20,17 +20,20 @@
 
 package to.networld.cyberagent.monitoring;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-
 public abstract class Logging {
 
-	private static final String LOG_CONFIG = Logging.class.getResource("/log4j.properties").getPath();
+	private static final String LOG_CONFIG = Logging.class.getResource("log4j.properties").getPath();
 	
 	public static Logger getLogger() {
-		Logger log = Logger.getLogger("pca-logging");
-		PropertyConfigurator.configure(LOG_CONFIG);
+		Logger log = Logger.getLogger("monitoring");
+		File fd = new File(LOG_CONFIG);
+		if ( fd.exists() )
+			PropertyConfigurator.configure(LOG_CONFIG);
 		return log;
 	}
 }
