@@ -74,6 +74,24 @@ public class ConnectionHandler extends Thread {
 		this.writer.newLine();
 		this.writer.flush();
 	}
+	
+	/**
+	 * Read n chars from the request. n should be the size of the
+	 * message.
+	 * 
+	 * @param _size The size of the received message.
+	 * @return
+	 * @throws IOException
+	 */
+	private StringBuffer readResponse(int _size) throws IOException {
+		StringBuffer message = new StringBuffer();
+		char ch;
+		while ( (ch = (char)this.reader.read()) != -1 ) {
+			message.append(ch);
+			if ( message.length() >= _size ) break;
+		}
+		return message;
+	}
 
 	@Override
 	public void run() {
@@ -98,13 +116,12 @@ public class ConnectionHandler extends Thread {
 				/*
 				 * Parse the received request.
 				 */
-				StringBuffer message = new StringBuffer();
-				String line = reader.readLine();						
-			
-				while ( (message.length() + line.length()) <= size ) {
-					message.append(line + "\n");
-					line = reader.readLine();
-				}
+				StringBuffer response = this.readResponse(size);
+				Logging.getLogger().debug("[" + this.clientID + "] Message received: " + response.toString().replace("\n", "\\n"));
+				/*
+				 * TODO: The StringBuffer response is the message from the client.
+				 *       Handle that message!!!
+				 */
 			}
 			
 			/*
@@ -118,6 +135,7 @@ public class ConnectionHandler extends Thread {
 		} catch (NumberFormatException e) {
 			try {
 				this.sendLine("HTTP/1.1 411 Length Required");
+				this.sendLine("");
 			} catch (IOException e1) {
 				Logging.getLogger().error("[" + this.clientID + "] " + e1.getLocalizedMessage());
 			}
