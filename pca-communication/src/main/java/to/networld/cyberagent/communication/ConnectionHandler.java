@@ -25,6 +25,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.UUID;
 
 import javax.net.ssl.SSLSocket;
 import javax.xml.soap.SOAPException;
@@ -32,6 +33,13 @@ import javax.xml.soap.SOAPException;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
 import to.networld.cyberagent.monitoring.Logging;
 
+/**
+ * The class that handles a single connection to the client. The purpose of this
+ * part is only to handle the raw stream and to assure the right identity.
+ * 
+ * @author Corneliu Stanciu
+ * @author Alex Oberhauser
+ */
 public class ConnectionHandler extends Thread {
 	private final SSLSocket socket;
 	private final String clientID;
@@ -45,18 +53,18 @@ public class ConnectionHandler extends Thread {
 		this.clientID = this.socket.getInetAddress().getHostAddress() + ":" + this.socket.getPort();
 	}
 	
-	private void sendSOAPOk() throws IOException {
+	private void sendSOAPStatus(String _conversationID, String _status) throws IOException {
 		try {
-			String soapMessage = SOAPBuilder.createStatusMessage("OK");
+			String soapMessage = SOAPBuilder.createStatusMessage(_conversationID, _status);
 			this.sendLine("HTTP/1.1 200 OK");
 			this.sendLine("Content-Type: application/soap+xml; charset=utf-8");
 			this.sendLine("");
 			this.sendLine(soapMessage);
 		} catch (SOAPException e) {
 			this.sendLine("HTTP/1.1 200 OK");
-			this.sendLine("Content-Type: text-plain");
+			this.sendLine("Content-Type: text/plain");
 			this.sendLine("");
-			this.sendLine("OK");
+			this.sendLine(_status);
 		}
 		
 	}
@@ -83,23 +91,26 @@ public class ConnectionHandler extends Thread {
 				rawHeader.append(hline + "\n");
 			}
 			HTTPHeader header = new HTTPHeader(rawHeader);
-			int size = Integer.valueOf(header.getContentLength());
 			
-			/*
-			 * Parse the received request.
-			 */
-			StringBuffer message = new StringBuffer();
-			String line = reader.readLine();						
+			if ( !header.getCommand().equalsIgnoreCase("get") ) {
+				int size = Integer.valueOf(header.getContentLength());
 			
-			while ( (message.length() + line.length()) <= size ) {
-				message.append(line + "\n");
-				line = reader.readLine();
+				/*
+				 * Parse the received request.
+				 */
+				StringBuffer message = new StringBuffer();
+				String line = reader.readLine();						
+			
+				while ( (message.length() + line.length()) <= size ) {
+					message.append(line + "\n");
+					line = reader.readLine();
+				}
 			}
 			
 			/*
 			 * Send OK to the client.
 			 */
-			this.sendSOAPOk();
+			this.sendSOAPStatus(UUID.randomUUID().toString(), "OK");
 		} catch (IOException e) {
 			Logging.getLogger().error("[" + this.clientID + "] " + e.getLocalizedMessage());
 		} catch (NullPointerException e) {

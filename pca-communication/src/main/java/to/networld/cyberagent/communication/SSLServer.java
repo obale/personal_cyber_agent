@@ -42,14 +42,15 @@ import javax.net.ssl.SSLSocket;
 import to.networld.cyberagent.monitoring.Logging;
 
 /**
+ * SSL server implementation that uses part of the HTTP/1.1 specification.
  * 
  * @author Corneliu Stanciu
  * @author Alex Oberhauser
- *
  */
 public class SSLServer {
 	private static SSLServer instance = null;
 	private Properties config = null;
+	private boolean running = true;
 	
 	private SSLServer() throws IOException {
 		this.config = new Properties();
@@ -88,7 +89,7 @@ public class SSLServer {
 		SSLServerSocket socket = (SSLServerSocket) sslFactory.createServerSocket(new Integer(this.config.getProperty("ssl.port")), 
 				10, 
 				InetAddress.getByName(this.config.getProperty("ssl.host")));
-		
+
 		try {
 			X509Certificate cert = (X509Certificate) keystore.getCertificate(this.config.getProperty("certificate.alias"));
 			Logging.getLogger().info("SSL Server X.509 certificate: " + cert.getIssuerDN());
@@ -110,14 +111,20 @@ public class SSLServer {
 	 * @throws UnrecoverableKeyException
 	 */
 	public void start() throws NoSuchAlgorithmException, IOException, KeyStoreException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+		this.running = true;
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 		
 		SSLServerSocket sslServerSocket = this.createSSLServerSocket();
 		Logging.getLogger().info("SSL Server listening on socket://" + this.config.getProperty("ssl.host") + ":"
 				+ this.config.getProperty("ssl.port") + "...");
-		while ( true ) {
+		while ( this.running ) {
 			SSLSocket socket = (SSLSocket) sslServerSocket.accept();
 			threadPool.execute(new ConnectionHandler(socket));
 		}
 	}
+	
+	/**
+	 * Stops the currently running server.
+	 */
+	public static void stop() { instance.running = false; }
 }

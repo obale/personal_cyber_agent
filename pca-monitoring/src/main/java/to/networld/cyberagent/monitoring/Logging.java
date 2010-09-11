@@ -25,6 +25,11 @@ import java.io.File;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+/**
+ * Logging on the base of log4j for the whole pca.
+ * 
+ * @author Alex Oberhauser
+ */
 public abstract class Logging {
 
 	private static final String LOG_CONFIG = Logging.class.getResource("log4j.properties").getPath();

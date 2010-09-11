@@ -3,8 +3,9 @@ package to.networld.cyberagent.communication;
 import java.util.HashMap;
 
 /**
+ * Representation of a HTTP header.
+ * 
  * @author Alex Oberhauser
- *
  */
 public class HTTPHeader {
 	private final StringBuffer rawHeader;
@@ -29,6 +30,8 @@ public class HTTPHeader {
 	
 	public String getCommandLine() { return this.commandLine; }
 	public String getCommand() { return this.commandLine.split(" ")[0].toLowerCase(); }
+	
 	public String getContentLength() { return this.headerFields.get("content-length"); }
 	public String getContentType() { return this.headerFields.get("content-type"); }
+	public String getUserAgent() { return this.headerFields.get("user-agent"); }
 }
