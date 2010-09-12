@@ -28,7 +28,10 @@ import java.io.OutputStreamWriter;
 import java.util.UUID;
 
 import javax.net.ssl.SSLSocket;
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
 import to.networld.cyberagent.communication.common.OntologyHandler;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
@@ -59,6 +62,7 @@ public class ConnectionHandler extends Thread {
 			String soapMessage = SOAPBuilder.createStatusMessage(_conversationID, _status);
 			this.sendLine("HTTP/1.1 200 OK");
 			this.sendLine("Content-Type: application/soap+xml; charset=utf-8");
+			this.sendLine("Content-Length: " + soapMessage.length());
 			this.sendLine("SOAPAction: \"" + OntologyHandler.PCA_ACTIONS_NS + "Status\"");
 			this.sendLine("");
 			this.sendLine(soapMessage);
@@ -82,10 +86,10 @@ public class ConnectionHandler extends Thread {
 	 * message.
 	 * 
 	 * @param _size The size of the received message.
-	 * @return
+	 * @return The client request.
 	 * @throws IOException
 	 */
-	private StringBuffer readResponse(int _size) throws IOException {
+	private StringBuffer readRequest(int _size) throws IOException {
 		StringBuffer message = new StringBuffer();
 		char ch;
 		while ( (ch = (char)this.reader.read()) != -1 ) {
@@ -118,14 +122,27 @@ public class ConnectionHandler extends Thread {
 				/*
 				 * Parse the received request.
 				 */
-				StringBuffer response = this.readResponse(size);
-				Logging.getLogger().debug("[" + this.clientID + "] Message of type '"+ header.getContentType() +  "' received: '" + response.toString().replace("\n", "\\n") + "'");
-
-				/*
+				StringBuffer request = this.readRequest(size);
+				Logging.getLogger().debug("[" + this.clientID + "] Message of type '" + 
+						header.getContentType() +  "' received from client '" + 
+						header.getUserAgent() + "': '" + request.toString().replace("\n", "\\n") + "'");
+				
+				/**
+				 * XXX: The following part reads the FOAF URL from the testing client. This part shouldn't
+				 *      specified in the pca-communication module, but in the pca-reasoning.
+				 *      
 				 * TODO: The StringBuffer response is the message from the client.
 				 *       Handle that message!!!
 				 */
-
+				Logging.getLogger().debug("[" + this.clientID + "] Starting reasoning...");
+				try {
+					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
+					SOAPElement element = (SOAPElement) soapRequest.getSOAPHeader().getChildElements().next();
+					String foafURL = element.getAttributeValue(new QName(OntologyHandler.RDF_NS, "resource", OntologyHandler.RDF_PREFIX));
+					Logging.getLogger().debug("[" + this.clientID + "] Client '" + foafURL + "' found!");
+				} catch (SOAPException e) {
+					Logging.getLogger().error(e.getLocalizedMessage());
+				}
 			}
 			
 			/*

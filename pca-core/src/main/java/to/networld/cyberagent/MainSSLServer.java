@@ -28,20 +28,20 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import to.networld.cyberagent.communication.SSLServer;
+//import to.networld.cyberagent.security.AccessHandler;
 
 public class MainSSLServer {
 
-	/**
-	 * @param args
-	 * @throws IOException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws CertificateException 
-	 * @throws KeyStoreException 
-	 * @throws KeyManagementException 
-	 * @throws UnrecoverableKeyException 
-	 */
 	public static void main(String[] args) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, CertificateException, UnrecoverableKeyException {
 		SSLServer server = SSLServer.newInstance();
 		server.start();
+		
+		/*
+		 * XXX: The following part is only for testing purpose during the
+		 *      development phase. If you are unsure please comment
+		 *      the next lines out.
+		 */
+//		AccessHandler accessHandler = AccessHandler.newInstance();
+//		accessHandler.printRootCA();
 	}
 }

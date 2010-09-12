@@ -67,6 +67,8 @@ public class MainSSLClient {
 
 		writer.write("POST / HTTP/1.1");
 		writer.newLine();
+		writer.write("User-Agent: PCA DEV Client v0.1-SNAPSHOT");
+		writer.newLine();
 		writer.write("Content-Length: " + messageToSend.length());
 		writer.newLine();
 		writer.write("Content-Type: application/soap+xml; charset=utf-8");

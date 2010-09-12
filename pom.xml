@@ -14,9 +14,10 @@
         <packaging>pom</packaging>
         <url>http://cyberagent.networld.to</url>
         <name>Networld Personal Cyber Agent</name>
-        <description>Personal Cyber Agent is an application that is
-                responsible for the work that normally are performend by a
-                secretary.</description>
+        <description>Personal Cyber Agent is the core part of the "Future
+                House" Project. The purpose of this software control all
+                internal and external actions that are related to the house
+                scenario.</description>
 
         <organization>
                 <name>Networld</name>
@@ -64,16 +65,12 @@
         </developers>
 
         <modules>
+                <module>pca-core</module>
+                <module>pca-monitoring</module>
+                <module>pca-security</module>
                 <module>pca-communication</module>
                 <module>pca-reasoning</module>
-                <module>pca-monitoring</module>
-                <module>pca-core</module>
         </modules>
-
-        <issueManagement>
-                <system>Bugzilla</system>
-                <url>https://bugs.localnet.xy/</url>
-        </issueManagement>
 
         <reporting>
                 <outputDirectory>target/site</outputDirectory>
@@ -100,6 +97,11 @@
                         <dependency>
                                 <groupId>to.networld.cyberagent</groupId>
                                 <artifactId>pca-core</artifactId>
+                                <version>0.1-SNAPSHOT</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>to.networld.cyberagent</groupId>
+                                <artifactId>pca-security</artifactId>
                                 <version>0.1-SNAPSHOT</version>
                         </dependency>
                 </dependencies>
