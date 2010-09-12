@@ -30,6 +30,7 @@ import java.util.UUID;
 import javax.net.ssl.SSLSocket;
 import javax.xml.soap.SOAPException;
 
+import to.networld.cyberagent.communication.common.OntologyHandler;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
 import to.networld.cyberagent.monitoring.Logging;
 
@@ -58,6 +59,7 @@ public class ConnectionHandler extends Thread {
 			String soapMessage = SOAPBuilder.createStatusMessage(_conversationID, _status);
 			this.sendLine("HTTP/1.1 200 OK");
 			this.sendLine("Content-Type: application/soap+xml; charset=utf-8");
+			this.sendLine("SOAPAction: \"" + OntologyHandler.PCA_ACTIONS_NS + "Status\"");
 			this.sendLine("");
 			this.sendLine(soapMessage);
 		} catch (SOAPException e) {

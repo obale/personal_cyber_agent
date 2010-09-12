@@ -19,6 +19,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 
 import to.networld.cyberagent.communication.SSLServer;
+import to.networld.cyberagent.communication.common.OntologyHandler;
 
 /**
  * @author Alex Oberhauser
@@ -31,11 +32,11 @@ public class MainSSLClient {
 		message.setProperty(SOAPMessage.WRITE_XML_DECLARATION, "true");
 
 		SOAPHeader header = message.getSOAPHeader();
-		header.addNamespaceDeclaration("foaf", "http://xmlns.com/foaf/0.1/");
-		header.addNamespaceDeclaration("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		header.addNamespaceDeclaration(OntologyHandler.FOAF_PREFIX, OntologyHandler.FOAF_NS);
+		header.addNamespaceDeclaration(OntologyHandler.RDF_PREFIX, OntologyHandler.RDF_NS);
 
-		SOAPElement element = header.addHeaderElement(new QName("http://xmlns.com/foaf/0.1/", "Agent", "foaf"));
-		element.addAttribute(new QName("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "resource", "rdf"),
+		SOAPElement element = header.addHeaderElement(new QName(OntologyHandler.FOAF_NS, "Agent", OntologyHandler.FOAF_PREFIX));
+		element.addAttribute(new QName(OntologyHandler.RDF_NS, "resource", OntologyHandler.RDF_PREFIX),
 				"http://devnull.networld.to/foaf.rdf#me");
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -69,6 +70,8 @@ public class MainSSLClient {
 		writer.write("Content-Length: " + messageToSend.length());
 		writer.newLine();
 		writer.write("Content-Type: application/soap+xml; charset=utf-8");
+		writer.newLine();
+		writer.write("SOAPAction: \"" + OntologyHandler.PCA_ACTIONS_NS + "Request\"");
 		writer.newLine();
 		writer.newLine();
 		writer.write(messageToSend);

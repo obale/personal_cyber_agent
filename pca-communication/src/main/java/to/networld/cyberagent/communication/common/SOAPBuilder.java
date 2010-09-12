@@ -20,8 +20,6 @@ import javax.xml.soap.SOAPMessage;
  * @author Alex Oberhauser
  */
 public class SOAPBuilder {
-	private static final String networkNamespace = "http://pca.networld.to/network#";
-	private static final String networkNamespacePrefix = "pca-network";
 	
 	/**
 	 * Creates a standard SOAP status message.
@@ -36,11 +34,11 @@ public class SOAPBuilder {
 		SOAPBody soapBody = okMessage.getSOAPBody();
 		SOAPHeader soapHeader = okMessage.getSOAPHeader();
 		if ( _conversationID != null ) {
-			SOAPElement sessionID = soapHeader.addChildElement(new QName(networkNamespace, "session-id", networkNamespacePrefix));
+			SOAPElement sessionID = soapHeader.addChildElement(new QName(OntologyHandler.PCA_NETWORK_NS, "session-id", OntologyHandler.PCA_NETWORK_PREFIX));
 			sessionID.addTextNode(_conversationID);
 		}
-		okMessage.getSOAPPart().getEnvelope().addNamespaceDeclaration(networkNamespacePrefix, networkNamespace);
-		SOAPElement element = soapBody.addChildElement(new QName(networkNamespace, "status", networkNamespacePrefix));
+		okMessage.getSOAPPart().getEnvelope().addNamespaceDeclaration(OntologyHandler.PCA_NETWORK_PREFIX, OntologyHandler.PCA_NETWORK_NS);
+		SOAPElement element = soapBody.addChildElement(new QName(OntologyHandler.PCA_NETWORK_NS, "status", OntologyHandler.PCA_NETWORK_PREFIX));
 		element.addTextNode(_status);
 		okMessage.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, "utf-8");
 		okMessage.setProperty(SOAPMessage.WRITE_XML_DECLARATION, "true");
