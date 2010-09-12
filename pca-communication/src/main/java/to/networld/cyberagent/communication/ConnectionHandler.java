@@ -114,16 +114,18 @@ public class ConnectionHandler extends Thread {
 			
 			if ( !header.getCommand().equalsIgnoreCase("get") ) {
 				int size = Integer.valueOf(header.getContentLength());
-			
+
 				/*
 				 * Parse the received request.
 				 */
 				StringBuffer response = this.readResponse(size);
 				Logging.getLogger().debug("[" + this.clientID + "] Message of type '"+ header.getContentType() +  "' received: '" + response.toString().replace("\n", "\\n") + "'");
+
 				/*
 				 * TODO: The StringBuffer response is the message from the client.
 				 *       Handle that message!!!
 				 */
+
 			}
 			
 			/*

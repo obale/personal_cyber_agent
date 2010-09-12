@@ -53,7 +53,7 @@ public class MainSSLClient {
 
 		URL trustedURL = SSLServer.class.getResource(config.getProperty("keystore.trusted"));
 		System.setProperty("javax.net.ssl.trustStore", trustedURL.getPath());
-//		 System.setProperty("javax.net.ssl.trustStorePassword", "1234567890");
+//		System.setProperty("javax.net.ssl.trustStorePassword", "1234567890");
 
 		SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 		SSLSocket socket = (SSLSocket) factory.createSocket(config.getProperty("ssl.host"), new Integer(config.getProperty("ssl.port")));

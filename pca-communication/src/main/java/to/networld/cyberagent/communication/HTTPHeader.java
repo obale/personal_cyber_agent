@@ -21,10 +21,10 @@ public class HTTPHeader {
 		String [] lines = this.rawHeader.toString().split("\n");
 		this.commandLine = lines[0];
 		for ( int count=1; count < lines.length; count++ ) {
-			String[] parts = lines[count].split(":");
+			String[] parts = lines[count].split(":", 2);
 			if ( parts.length < 2 )
 				continue;
-			this.headerFields.put(parts[0].trim().toLowerCase(), parts[1].trim().toLowerCase());
+			this.headerFields.put(parts[0].trim().toLowerCase(), parts[1].trim());
 		}
 	}
 	
@@ -34,4 +34,5 @@ public class HTTPHeader {
 	public String getContentLength() { return this.headerFields.get("content-length"); }
 	public String getContentType() { return this.headerFields.get("content-type"); }
 	public String getUserAgent() { return this.headerFields.get("user-agent"); }
+	public String getSOAPAction() { return this.headerFields.get("soapaction"); }
 }

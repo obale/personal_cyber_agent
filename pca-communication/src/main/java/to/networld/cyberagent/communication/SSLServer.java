@@ -47,8 +47,9 @@ import to.networld.cyberagent.monitoring.Logging;
  * @author Corneliu Stanciu
  * @author Alex Oberhauser
  */
-public class SSLServer {
+public class SSLServer extends Thread {
 	private static SSLServer instance = null;
+	private SSLServerSocket sslServerSocket = null;
 	private Properties config = null;
 	private boolean running = true;
 	
@@ -110,11 +111,11 @@ public class SSLServer {
 	 * @throws KeyManagementException
 	 * @throws UnrecoverableKeyException
 	 */
-	public void start() throws NoSuchAlgorithmException, IOException, KeyStoreException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+	public void startServer() throws NoSuchAlgorithmException, IOException, KeyStoreException, CertificateException, KeyManagementException, UnrecoverableKeyException {
 		this.running = true;
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 		
-		SSLServerSocket sslServerSocket = this.createSSLServerSocket();
+		this.sslServerSocket = this.createSSLServerSocket();
 		Logging.getLogger().info("SSL Server listening on socket://" + this.config.getProperty("ssl.host") + ":"
 				+ this.config.getProperty("ssl.port") + "...");
 		while ( this.running ) {
@@ -125,6 +126,33 @@ public class SSLServer {
 	
 	/**
 	 * Stops the currently running server.
+	 * 
+	 * @throws IOException 
 	 */
-	public static void stop() { instance.running = false; }
+	public void stopServer() throws IOException {
+		this.sslServerSocket.close();
+		this.running = false;
+	}
+
+	/**
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		try {
+			this.startServer();
+		} catch (KeyManagementException e) {
+			Logging.getLogger().error(e.getLocalizedMessage());
+		} catch (UnrecoverableKeyException e) {
+			Logging.getLogger().error(e.getLocalizedMessage());
+		} catch (NoSuchAlgorithmException e) {
+			Logging.getLogger().error(e.getLocalizedMessage());
+		} catch (KeyStoreException e) {
+			Logging.getLogger().error(e.getLocalizedMessage());
+		} catch (CertificateException e) {
+			Logging.getLogger().error(e.getLocalizedMessage());
+		} catch (IOException e) {
+			Logging.getLogger().error(e.getLocalizedMessage());
+		}
+	}
 }
