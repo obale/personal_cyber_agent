@@ -54,6 +54,7 @@ public class SSLServer extends Thread {
 	private boolean running = true;
 	
 	private SSLServer() throws IOException {
+		this.setName("SSLServer");
 		this.config = new Properties();
 		this.config.load(SSLServer.class.getResourceAsStream("default.properties"));
 	}
@@ -93,7 +94,7 @@ public class SSLServer extends Thread {
 
 		try {
 			X509Certificate cert = (X509Certificate) keystore.getCertificate(this.config.getProperty("certificate.alias"));
-			Logging.getLogger().info("SSL Server X.509 certificate: " + cert.getIssuerDN());
+			Logging.getLogger().info("Used X.509 certificate: " + cert.getIssuerDN());
 		} catch (NullPointerException e) {
 			Logging.getLogger().error("Information for SSL certificate not found!");
 		}
@@ -116,10 +117,13 @@ public class SSLServer extends Thread {
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 		
 		this.sslServerSocket = this.createSSLServerSocket();
-		Logging.getLogger().info("SSL Server listening on socket://" + this.config.getProperty("ssl.host") + ":"
+		this.sslServerSocket.setNeedClientAuth(false); // TODO: Useful to authenticate here and not in a later step (with SOAP message)?
+		
+		Logging.getLogger().info("Listening on socket://" + this.config.getProperty("ssl.host") + ":"
 				+ this.config.getProperty("ssl.port") + "...");
+		
 		while ( this.running ) {
-			SSLSocket socket = (SSLSocket) sslServerSocket.accept();
+			SSLSocket socket = (SSLSocket) this.sslServerSocket.accept();
 			threadPool.execute(new ConnectionHandler(socket));
 		}
 	}

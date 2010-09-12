@@ -25,6 +25,13 @@ import to.networld.cyberagent.communication.common.OntologyHandler;
  * @author Alex Oberhauser
  */
 public class MainSSLClient {
+	
+	public static void printStringWithPrefix(String _prefix, String _string) {
+		String[] lines = _string.split("\n");
+		for ( int count=0; count < lines.length; count++ ) {
+			System.out.println(_prefix + lines[count]);
+		}
+	}
 
 	public static String createRequest() throws SOAPException, IOException {
 		SOAPMessage message = MessageFactory.newInstance().createMessage();
@@ -64,31 +71,33 @@ public class MainSSLClient {
 		socket.startHandshake();
 
 		String messageToSend = createRequest();
-
-		writer.write("POST / HTTP/1.1");
-		writer.newLine();
-		writer.write("User-Agent: PCA DEV Client v0.1-SNAPSHOT");
-		writer.newLine();
-		writer.write("Content-Length: " + messageToSend.length());
-		writer.newLine();
-		writer.write("Content-Type: application/soap+xml; charset=utf-8");
-		writer.newLine();
-		writer.write("SOAPAction: \"" + OntologyHandler.PCA_ACTIONS_NS + "Request\"");
-		writer.newLine();
+		StringBuffer headerToSend = new StringBuffer();
+		headerToSend.append("POST / HTTP/1.1\r\n");
+		headerToSend.append("User-Agent: PCA DEV Client v0.1-SNAPSHOT\r\n");
+		headerToSend.append("Content-Length: " + messageToSend.length() + "\r\n");
+		headerToSend.append("Content-Type: application/soap+xml; charset=utf-8\r\n");
+		headerToSend.append("SOAPAction: \"" + OntologyHandler.PCA_ACTIONS_NS + "Request\"\r\n");
+		
+		writer.write(headerToSend.toString());
 		writer.newLine();
 		writer.write(messageToSend);
 		writer.flush();
-		 
+		
+		printStringWithPrefix(">> ", headerToSend.toString());
+		System.out.println(">> ");
+		printStringWithPrefix(">> ", messageToSend);
+		
+		System.out.println();
+		
 		String header;
-		System.out.println("--- HEADER   ---");
 		while ( !(header = reader.readLine()).equalsIgnoreCase("")) {
-			System.out.println(header);
+			System.out.println("<< " + header);
 		}
 		 
-		System.out.println("--- Response ---");
+		System.out.println("<< ");
 		String line;
 		while ( (line = reader.readLine()) != null ) {
-			System.out.println(line);
+			System.out.println("<< " + line);
 		}
 		 
 		writer.close();

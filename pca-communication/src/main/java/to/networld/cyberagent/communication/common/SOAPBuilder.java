@@ -65,7 +65,7 @@ public class SOAPBuilder {
 		okMessage.saveChanges();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		okMessage.writeTo(outputStream);
-		return new String(outputStream.toByteArray());
+		return new String(outputStream.toByteArray()).trim();
 	}
 	
 	public static SOAPMessage convertStringToSOAP(String _soapMessage) throws IOException, SOAPException {

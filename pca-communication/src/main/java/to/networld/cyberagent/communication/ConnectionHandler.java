@@ -115,7 +115,7 @@ public class ConnectionHandler extends Thread {
 				rawHeader.append(hline + "\n");
 			}
 			HTTPHeader header = new HTTPHeader(rawHeader);
-			
+
 			if ( !header.getCommand().equalsIgnoreCase("get") ) {
 				int size = Integer.valueOf(header.getContentLength());
 
@@ -134,7 +134,6 @@ public class ConnectionHandler extends Thread {
 				 * TODO: The StringBuffer response is the message from the client.
 				 *       Handle that message!!!
 				 */
-				Logging.getLogger().debug("[" + this.clientID + "] Starting reasoning...");
 				try {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
 					SOAPElement element = (SOAPElement) soapRequest.getSOAPHeader().getChildElements().next();
