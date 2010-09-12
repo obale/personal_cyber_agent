@@ -117,7 +117,7 @@ public class ConnectionHandler extends Thread {
 				 * Parse the received request.
 				 */
 				StringBuffer response = this.readResponse(size);
-				Logging.getLogger().debug("[" + this.clientID + "] Message received: " + response.toString().replace("\n", "\\n"));
+				Logging.getLogger().debug("[" + this.clientID + "] Message of type '"+ header.getContentType() +  "' received: '" + response.toString().replace("\n", "\\n") + "'");
 				/*
 				 * TODO: The StringBuffer response is the message from the client.
 				 *       Handle that message!!!

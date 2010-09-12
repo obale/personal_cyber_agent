@@ -54,7 +54,7 @@ public class SSLServer {
 	
 	private SSLServer() throws IOException {
 		this.config = new Properties();
-		config.load(SSLServer.class.getResourceAsStream("default.properties"));
+		this.config.load(SSLServer.class.getResourceAsStream("default.properties"));
 	}
 	
 	public static SSLServer newInstance() throws IOException {

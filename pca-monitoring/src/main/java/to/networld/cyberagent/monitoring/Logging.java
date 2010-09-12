@@ -20,7 +20,9 @@
 
 package to.networld.cyberagent.monitoring;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -32,13 +34,20 @@ import org.apache.log4j.PropertyConfigurator;
  */
 public abstract class Logging {
 
-	private static final String LOG_CONFIG = Logging.class.getResource("log4j.properties").getPath();
+	private static final InputStream configIS = 
+		Logging.class.getClassLoader().getResourceAsStream("to/networld/cyberagent/monitoring/log4j.properties");
 	
 	public static Logger getLogger() {
 		Logger log = Logger.getLogger("monitoring");
-		File fd = new File(LOG_CONFIG);
-		if ( fd.exists() )
-			PropertyConfigurator.configure(LOG_CONFIG);
+		if ( configIS != null ) {
+		    Properties props = new Properties();
+		    try {
+				props.load(configIS);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		    PropertyConfigurator.configure(props);
+		}
 		return log;
 	}
 }

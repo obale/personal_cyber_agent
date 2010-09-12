@@ -42,6 +42,7 @@ public class SOAPBuilder {
 		okMessage.getSOAPPart().getEnvelope().addNamespaceDeclaration(networkNamespacePrefix, networkNamespace);
 		SOAPElement element = soapBody.addChildElement(new QName(networkNamespace, "status", networkNamespacePrefix));
 		element.addTextNode(_status);
+		okMessage.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, "utf-8");
 		okMessage.setProperty(SOAPMessage.WRITE_XML_DECLARATION, "true");
 		okMessage.saveChanges();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

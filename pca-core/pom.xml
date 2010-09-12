@@ -41,7 +41,7 @@
                                         <archive>
                                                 <manifest>
                                                         <addClasspath>true</addClasspath>
-                                                        <mainClass>to.networld.cyberagent.Main</mainClass>
+                                                        <mainClass>to.networld.cyberagent.MainSSLServer</mainClass>
                                                 </manifest>
                                         </archive>
                                 </configuration>

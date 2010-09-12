@@ -29,7 +29,7 @@ import java.security.cert.CertificateException;
 
 import to.networld.cyberagent.communication.SSLServer;
 
-public class Main {
+public class MainSSLServer {
 
 	/**
 	 * @param args
