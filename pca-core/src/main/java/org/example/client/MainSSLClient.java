@@ -12,6 +12,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -21,11 +22,14 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.components.crypto.CredentialException;
 
 import to.networld.cyberagent.communication.SSLServer;
 import to.networld.cyberagent.communication.common.ActionURIHandler;
 import to.networld.cyberagent.communication.common.OntologyHandler;
+import to.networld.soap.security.common.Credential;
+import to.networld.soap.security.interfaces.ICredential;
 import to.networld.soap.security.interfaces.ISecSOAPMessage;
 import to.networld.soap.security.security.SOAPSecMessageFactory;
 
@@ -50,13 +54,36 @@ public class MainSSLClient {
 		SOAPHeader header = message.getSOAPHeader();
 		header.addNamespaceDeclaration(OntologyHandler.FOAF_PREFIX, OntologyHandler.FOAF_NS);
 		header.addNamespaceDeclaration(OntologyHandler.RDF_PREFIX, OntologyHandler.RDF_NS);
+		header.addNamespaceDeclaration(OntologyHandler.GEO_PREFIX, OntologyHandler.GEO_NS);
 
 		SOAPElement element = header.addHeaderElement(new QName(OntologyHandler.FOAF_NS, "Agent", OntologyHandler.FOAF_PREFIX));
 		element.addAttribute(new QName(OntologyHandler.RDF_NS, "resource", OntologyHandler.RDF_PREFIX),
 				"http://devnull.networld.to/foaf.rdf#me");
-
+		
+		SOAPElement basedNearElem = element.addChildElement(new QName(OntologyHandler.FOAF_NS, "based_near", OntologyHandler.FOAF_PREFIX));
+		SOAPElement pointElem = basedNearElem.addChildElement(new QName(OntologyHandler.GEO_NS, "Point", OntologyHandler.GEO_PREFIX));
+		pointElem.addChildElement(new QName(OntologyHandler.GEO_NS, "lat", OntologyHandler.GEO_PREFIX)).addTextNode("47.124");
+		pointElem.addChildElement(new QName(OntologyHandler.GEO_NS, "long", OntologyHandler.GEO_PREFIX)).addTextNode("11.4345");
+		
+		Vector<WSEncryptionPart> encryptionPart = new Vector<WSEncryptionPart>();
+		encryptionPart.add(new WSEncryptionPart(
+				"Agent", 
+				OntologyHandler.FOAF_NS, 
+				"Header"));
+		
+		Properties config = new Properties();
+		config.load(MainSSLClient.class.getResourceAsStream("default.properties"));
 		
 		
+		String pkcs12File = MainSSLClient.class.getResource(config.getProperty("pcks12.file")).getFile();
+		String publicKeystoreFile = MainSSLClient.class.getResource(config.getProperty("keystore.file")).getFile();
+		String password = config.getProperty("keystore.password");
+		
+		ICredential johnCredential = new Credential(pkcs12File, "johndoe", "johndoe", publicKeystoreFile, password);
+		
+		secMessage.encryptSOAPMessage(encryptionPart , johnCredential, "rootca");
+		
+		message.saveChanges();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		secMessage.printSOAPMessage(outputStream);
 		return new String(outputStream.toByteArray());

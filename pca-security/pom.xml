@@ -29,14 +29,9 @@
 
         <dependencies>
                 <dependency>
-                        <groupId>to.networld.semantic</groupId>
-                        <artifactId>scrawler</artifactId>
-                        <version>0.2</version>
-                </dependency>
-                <dependency>
                         <groupId>to.networld.soap.security</groupId>
                         <artifactId>soap_security_framework</artifactId>
-                        <version>0.1-SNAPSHOT</version>
+                        <version>0.2-SNAPSHOT</version>
                 </dependency>
         </dependencies>
 

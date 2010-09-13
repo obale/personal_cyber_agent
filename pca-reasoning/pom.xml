@@ -5,6 +5,15 @@
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         </properties>
 
+        <repositories>
+                <repository>
+                        <id>networld-repo</id>
+                        <name>Networld Repository</name>
+                        <url>http://repo1.networld.to</url>
+                </repository>
+        </repositories>
+
+
         <parent>
                 <groupId>to.networld.cyberagent</groupId>
                 <artifactId>pca</artifactId>
@@ -21,14 +30,9 @@
 
         <dependencies>
                 <dependency>
-                        <groupId>net.sourceforge.wsmo4j</groupId>
-                        <artifactId>wsmo4j</artifactId>
-                        <version>0.6.2</version>
-                </dependency>
-                <dependency>
-                        <groupId>net.sourceforge.wsmo4j</groupId>
-                        <artifactId>wsmo-api</artifactId>
-                        <version>0.6.2</version>
+                        <groupId>to.networld.semantic</groupId>
+                        <artifactId>scrawler</artifactId>
+                        <version>0.2</version>
                 </dependency>
         </dependencies>
 

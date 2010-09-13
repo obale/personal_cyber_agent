@@ -139,6 +139,7 @@ public class ConnectionHandler extends Thread {
 				 */
 				try {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
+//					SOAPElement element = (SOAPElement) soapRequest.getSOAPHeader().getChildElements(new QName(OntologyHandler.FOAF_NS, "Agent", OntologyHandler.FOAF_PREFIX)).next();
 					SOAPElement element = (SOAPElement) soapRequest.getSOAPHeader().getChildElements().next();
 					String foafURL = element.getAttributeValue(new QName(OntologyHandler.RDF_NS, "resource", OntologyHandler.RDF_PREFIX));
 					Logging.getLogger().debug("[" + this.clientID + "] Client '" + foafURL + "' found!");

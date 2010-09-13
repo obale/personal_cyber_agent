@@ -79,11 +79,6 @@
                                 </configuration>
                         </plugin>
                 </plugins>
-                <resources>
-                        <resource>
-                                <directory>${basedir}/target/dependency</directory>
-                        </resource>
-                </resources>
         </build>
 
 </project>
