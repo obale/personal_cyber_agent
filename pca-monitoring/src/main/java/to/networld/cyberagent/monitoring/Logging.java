@@ -28,7 +28,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
- * Logging on the base of log4j for the whole pca.
+ * Logging on the base of log4j for the whole pca. Useful to handle
+ * the logging in a central way to be consistent and to have a unique
+ * logging file output format that could be parsed easily.
  * 
  * @author Alex Oberhauser
  */

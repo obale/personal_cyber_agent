@@ -22,7 +22,7 @@ public class KeyHandler {
 	
 	private KeyHandler() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
 		this.config = new Properties();
-		config.load(KeyHandler.class.getResourceAsStream("security.properties"));
+		this.config.load(KeyHandler.class.getResourceAsStream("security.properties"));
 		
 		this.keystore = KeyStore.getInstance(config.getProperty("security.type"));
 		this.keystore.load(KeyHandler.class.getResourceAsStream("/" + config.getProperty("security.keystore")), 

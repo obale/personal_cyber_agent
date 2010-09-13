@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import to.networld.cyberagent.communication.common.ActionURIHandler;
 import to.networld.cyberagent.communication.common.OntologyHandler;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
 import to.networld.cyberagent.monitoring.Logging;
@@ -63,7 +64,7 @@ public class ConnectionHandler extends Thread {
 			this.sendLine("HTTP/1.1 200 OK");
 			this.sendLine("Content-Type: application/soap+xml; charset=utf-8");
 			this.sendLine("Content-Length: " + soapMessage.length());
-			this.sendLine("SOAPAction: \"" + OntologyHandler.PCA_ACTIONS_NS + "Status\"");
+			this.sendLine("SOAPAction: \"" + ActionURIHandler.STATUS_ACTION + "\"");
 			this.sendLine("");
 			this.sendLine(soapMessage);
 		} catch (SOAPException e) {
@@ -115,8 +116,7 @@ public class ConnectionHandler extends Thread {
 				rawHeader.append(hline + "\n");
 			}
 			HTTPHeader header = new HTTPHeader(rawHeader);
-
-			if ( !header.getCommand().equalsIgnoreCase("get") ) {
+			if ( header.getSOAPAction() != null ) {
 				int size = Integer.valueOf(header.getContentLength());
 
 				/*
@@ -128,11 +128,14 @@ public class ConnectionHandler extends Thread {
 						header.getUserAgent() + "': '" + request.toString().replace("\n", "\\n") + "'");
 				
 				/**
+				 * TODO: The StringBuffer response is the message from the client.
+				 *       Handle that message!!! For example call the classes that checks
+				 *       the security constraints.
+				 */
+				
+				/**
 				 * XXX: The following part reads the FOAF URL from the testing client. This part shouldn't
 				 *      specified in the pca-communication module, but in the pca-reasoning.
-				 *      
-				 * TODO: The StringBuffer response is the message from the client.
-				 *       Handle that message!!!
 				 */
 				try {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
@@ -142,12 +145,17 @@ public class ConnectionHandler extends Thread {
 				} catch (SOAPException e) {
 					Logging.getLogger().error(e.getLocalizedMessage());
 				}
+				/*
+				 * Send OK to the client.
+				 */
+				this.sendSOAPStatus(UUID.randomUUID().toString(), "OK");
+			} else {
+				Logging.getLogger().error("[" + this.clientID + "] Unauthorized access with User-Agent '" + header.getUserAgent() + "'");
+				this.sendLine("HTTP/1.1 500 Permission Denied");
+				this.sendLine("Content-Type: text/plain; charset=utf-8");
+				this.sendLine("");
+				this.sendLine("Are you sure that you know what you are doing?");
 			}
-			
-			/*
-			 * Send OK to the client.
-			 */
-			this.sendSOAPStatus(UUID.randomUUID().toString(), "OK");
 		} catch (IOException e) {
 			Logging.getLogger().error("[" + this.clientID + "] " + e.getLocalizedMessage());
 		} catch (NullPointerException e) {

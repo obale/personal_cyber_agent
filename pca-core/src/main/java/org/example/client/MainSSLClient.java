@@ -19,6 +19,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 
 import to.networld.cyberagent.communication.SSLServer;
+import to.networld.cyberagent.communication.common.ActionURIHandler;
 import to.networld.cyberagent.communication.common.OntologyHandler;
 
 /**
@@ -76,7 +77,7 @@ public class MainSSLClient {
 		headerToSend.append("User-Agent: PCA DEV Client v0.1-SNAPSHOT\r\n");
 		headerToSend.append("Content-Length: " + messageToSend.length() + "\r\n");
 		headerToSend.append("Content-Type: application/soap+xml; charset=utf-8\r\n");
-		headerToSend.append("SOAPAction: \"" + OntologyHandler.PCA_ACTIONS_NS + "Request\"\r\n");
+		headerToSend.append("SOAPAction: \"" + ActionURIHandler.REQUEST_ACTION + "\"\r\n");
 		
 		writer.write(headerToSend.toString());
 		writer.newLine();

@@ -39,7 +39,7 @@ import javax.xml.soap.SOAPMessage;
  * 
  * @author Alex Oberhauser
  */
-public class SOAPBuilder {
+public abstract class SOAPBuilder {
 	
 	/**
 	 * Creates a standard SOAP status message.
@@ -68,6 +68,14 @@ public class SOAPBuilder {
 		return new String(outputStream.toByteArray()).trim();
 	}
 	
+	/**
+	 * Converts a SOAPMessage object to a String. Useful before sending over the wire.
+	 * 
+	 * @param _soapMessage The SOAP message to convert.
+	 * @return The SOAP message representation as String.
+	 * @throws IOException
+	 * @throws SOAPException
+	 */
 	public static SOAPMessage convertStringToSOAP(String _soapMessage) throws IOException, SOAPException {
 		InputStream inputStream = new ByteArrayInputStream(_soapMessage.getBytes());
 		return MessageFactory.newInstance().createMessage(null, inputStream);

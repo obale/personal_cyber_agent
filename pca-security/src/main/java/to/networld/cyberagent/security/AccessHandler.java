@@ -52,7 +52,8 @@ public class AccessHandler {
 	/**
 	 * Checks if the certificate was signed with the root certificate. If the
 	 * verification fails the methods throws one of the exceptions below. In
-	 * general that means that the client is not authorized by the framework.
+	 * general that means that the client is not authorized by the frameworks
+	 * root certificate.
 	 * 
 	 * @param _clientCert The certificate to check.
 	 * @throws InvalidKeyException
@@ -66,6 +67,9 @@ public class AccessHandler {
 		_clientCert.verify(this.keyHandler.getPublicRootCertificate());
 	}
 	
+	/**
+	 * XXX: Delete this method if you have assured that the code is working.
+	 */
 	public void printRootCA() {
 		try {
 			System.out.println(this.keyHandler.getPublicRootCertificate());

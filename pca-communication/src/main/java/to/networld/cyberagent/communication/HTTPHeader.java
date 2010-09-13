@@ -21,8 +21,6 @@
 package to.networld.cyberagent.communication;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 /**
  * Representation of a HTTP header.
@@ -53,6 +51,8 @@ public class HTTPHeader {
 	public String getCommandLine() { return this.commandLine; }
 	public String getCommand() { return this.commandLine.split(" ")[0].toLowerCase(); }
 	
+	public String getHeaderValue(String _value) { return this.headerFields.get(_value.toLowerCase()); }
+	
 	public String getContentLength() { return this.headerFields.get("content-length"); }
 	public String getContentType() { return this.headerFields.get("content-type"); }
 	public String getUserAgent() { return this.headerFields.get("user-agent"); }
@@ -62,13 +62,7 @@ public class HTTPHeader {
 	
 	@Override
 	public String toString() {
-		StringBuffer strbuffer = new StringBuffer();
-		Iterator<Entry<String, String>> iter = headerFields.entrySet().iterator();
-		Entry<String, String> entry;
-		while ( iter.hasNext() ) {
-			entry = iter.next();
-			strbuffer.append(entry.getKey() + ": " + entry.getValue() + "\n");
-		}
-		return strbuffer.toString();
+		return this.rawHeader.toString();
 	}
+	
 }

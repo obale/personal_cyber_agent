@@ -5,7 +5,7 @@ package to.networld.cyberagent.communication.common;
  *
  * @author Alex Oberhauser
  */
-public abstract class OntologyHandler {
+public interface OntologyHandler {
 	public static final String PCA_ACTIONS_NS = "http://pca.networld.to/actions#";
 	public static final String PCA_ACTIONS_PREFIX = "pca-actions";
 
