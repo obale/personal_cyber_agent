@@ -25,18 +25,22 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.UUID;
 
 import javax.net.ssl.SSLSocket;
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.ws.security.components.crypto.CredentialException;
+
 import to.networld.cyberagent.communication.common.ActionURIHandler;
-import to.networld.cyberagent.communication.common.OntologyHandler;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
 import to.networld.cyberagent.monitoring.Logging;
+import to.networld.cyberagent.security.SecSOAPMessageHandler;
+import to.networld.soap.security.security.SOAPSecMessageFactory;
 
 /**
  * The class that handles a single connection to the client. The purpose of this
@@ -133,17 +137,19 @@ public class ConnectionHandler extends Thread {
 				 *       the security constraints.
 				 */
 				
-				/**
-				 * XXX: The following part reads the FOAF URL from the testing client. This part shouldn't
-				 *      specified in the pca-communication module, but in the pca-reasoning.
-				 */
 				try {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
-//					SOAPElement element = (SOAPElement) soapRequest.getSOAPHeader().getChildElements(new QName(OntologyHandler.FOAF_NS, "Agent", OntologyHandler.FOAF_PREFIX)).next();
-					SOAPElement element = (SOAPElement) soapRequest.getSOAPHeader().getChildElements().next();
-					String foafURL = element.getAttributeValue(new QName(OntologyHandler.RDF_NS, "resource", OntologyHandler.RDF_PREFIX));
-					Logging.getLogger().debug("[" + this.clientID + "] Client '" + foafURL + "' found!");
+					SecSOAPMessageHandler.newInstance().getSOAPMessage(SOAPSecMessageFactory.newInstance(soapRequest));
+					soapRequest.writeTo(System.err);
 				} catch (SOAPException e) {
+					Logging.getLogger().error(e.getLocalizedMessage());
+				} catch (KeyStoreException e) {
+					Logging.getLogger().error(e.getLocalizedMessage());
+				} catch (NoSuchAlgorithmException e) {
+					Logging.getLogger().error(e.getLocalizedMessage());
+				} catch (CertificateException e) {
+					Logging.getLogger().error(e.getLocalizedMessage());
+				} catch (CredentialException e) {
 					Logging.getLogger().error(e.getLocalizedMessage());
 				}
 				/*

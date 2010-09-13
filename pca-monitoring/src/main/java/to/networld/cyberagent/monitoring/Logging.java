@@ -40,7 +40,7 @@ public abstract class Logging {
 		Logging.class.getClassLoader().getResourceAsStream("to/networld/cyberagent/monitoring/log4j.properties");
 	
 	public static Logger getLogger() {
-		Logger log = Logger.getLogger("monitoring");
+		Logger log = Logger.getLogger("to.networld.cyberagent");
 		if ( configIS != null ) {
 		    Properties props = new Properties();
 		    try {

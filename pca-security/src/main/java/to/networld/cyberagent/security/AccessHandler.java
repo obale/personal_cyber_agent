@@ -38,10 +38,10 @@ import javax.security.cert.Certificate;
  */
 public class AccessHandler {
 	private static AccessHandler instance = null;
-	private final KeyHandler keyHandler;
+	private final CredentialHandler credentialHandler;
 	
 	private AccessHandler() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-		this.keyHandler = KeyHandler.newInstance();
+		this.credentialHandler = CredentialHandler.newInstance();
 	}
 	
 	public static AccessHandler newInstance() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
@@ -64,7 +64,7 @@ public class AccessHandler {
 	 * @throws javax.security.cert.CertificateException
 	 */
 	public void verifyCertificate(Certificate _clientCert) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, KeyStoreException, javax.security.cert.CertificateException {
-		_clientCert.verify(this.keyHandler.getPublicRootCertificate());
+		_clientCert.verify(this.credentialHandler.getPublicRootCertificate());
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class AccessHandler {
 	 */
 	public void printRootCA() {
 		try {
-			System.out.println(this.keyHandler.getPublicRootCertificate());
+			System.out.println(this.credentialHandler.getPublicRootCertificate());
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
 		}
