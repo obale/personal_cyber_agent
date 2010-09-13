@@ -69,10 +69,10 @@ public abstract class SOAPBuilder {
 	}
 	
 	/**
-	 * Converts a SOAPMessage object to a String. Useful before sending over the wire.
+	 * Converts a String to a SOAPMessage object.
 	 * 
 	 * @param _soapMessage The SOAP message to convert.
-	 * @return The SOAP message representation as String.
+	 * @return The SOAP message representation as SOAPMessage object.
 	 * @throws IOException
 	 * @throws SOAPException
 	 */
