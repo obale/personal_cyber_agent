@@ -117,7 +117,7 @@ public class SSLServer extends Thread {
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 		
 		this.sslServerSocket = this.createSSLServerSocket();
-		this.sslServerSocket.setNeedClientAuth(false); // TODO: Useful to authenticate here and not in a later step (with SOAP message)?
+		this.sslServerSocket.setNeedClientAuth(false); // TODO: Is it useful to authenticate here and not in a later step within the SOAP message?
 		
 		Logging.getLogger().info("Listening on https://" + this.config.getProperty("ssl.host") + ":"
 				+ this.config.getProperty("ssl.port") + "...");

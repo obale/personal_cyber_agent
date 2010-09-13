@@ -69,7 +69,7 @@ public class ConnectionHandler extends Thread {
 			this.sendLine(soapMessage);
 		} catch (SOAPException e) {
 			this.sendLine("HTTP/1.1 200 OK");
-			this.sendLine("Content-Type: text/plain");
+			this.sendLine("Content-Type: text/plain; charset=utf-8");
 			this.sendLine("");
 			this.sendLine(_status);
 		}
@@ -151,7 +151,7 @@ public class ConnectionHandler extends Thread {
 				this.sendSOAPStatus(UUID.randomUUID().toString(), "OK");
 			} else {
 				Logging.getLogger().error("[" + this.clientID + "] Unauthorized access with User-Agent '" + header.getUserAgent() + "'");
-				this.sendLine("HTTP/1.1 500 Permission Denied");
+				this.sendLine("HTTP/1.1 412 Precondition Failed");
 				this.sendLine("Content-Type: text/plain; charset=utf-8");
 				this.sendLine("");
 				this.sendLine("Are you sure that you know what you are doing?");
@@ -171,13 +171,13 @@ public class ConnectionHandler extends Thread {
 		} finally {
 			try {
 				if ( reader != null )
-					reader.close();
+					this.reader.close();
 				if ( writer != null )
-					writer.close();
+					this.writer.close();
 				this.socket.close();
 				Logging.getLogger().debug("[" + clientID + "] Connection closed!");
 			} catch (IOException e) {
-				Logging.getLogger().error(e.getLocalizedMessage());
+				Logging.getLogger().error("[" + clientID + "] " + e.getLocalizedMessage());
 			}
 		}
 	}

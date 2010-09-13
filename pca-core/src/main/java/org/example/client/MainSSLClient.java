@@ -7,20 +7,27 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Properties;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.ws.security.components.crypto.CredentialException;
+
 import to.networld.cyberagent.communication.SSLServer;
 import to.networld.cyberagent.communication.common.ActionURIHandler;
 import to.networld.cyberagent.communication.common.OntologyHandler;
+import to.networld.soap.security.interfaces.ISecSOAPMessage;
+import to.networld.soap.security.security.SOAPSecMessageFactory;
 
 /**
  * @author Alex Oberhauser
@@ -34,8 +41,9 @@ public class MainSSLClient {
 		}
 	}
 
-	public static String createRequest() throws SOAPException, IOException {
-		SOAPMessage message = MessageFactory.newInstance().createMessage();
+	public static String createRequest() throws SOAPException, IOException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, CredentialException {
+		ISecSOAPMessage secMessage = SOAPSecMessageFactory.newInstance(15);
+		SOAPMessage message = secMessage.getSOAPMessage();
 		message.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, "utf-8");
 		message.setProperty(SOAPMessage.WRITE_XML_DECLARATION, "true");
 
@@ -47,8 +55,10 @@ public class MainSSLClient {
 		element.addAttribute(new QName(OntologyHandler.RDF_NS, "resource", OntologyHandler.RDF_PREFIX),
 				"http://devnull.networld.to/foaf.rdf#me");
 
+		
+		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		message.writeTo(outputStream);
+		secMessage.printSOAPMessage(outputStream);
 		return new String(outputStream.toByteArray());
 	}
 

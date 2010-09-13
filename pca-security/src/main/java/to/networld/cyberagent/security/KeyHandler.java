@@ -35,6 +35,6 @@ public class KeyHandler {
 	}
 	
 	protected PublicKey getPublicRootCertificate() throws KeyStoreException { 
-		return this.keystore.getCertificate(config.getProperty("security.cacert")).getPublicKey();
+		return this.keystore.getCertificate(this.config.getProperty("security.cacert")).getPublicKey();
 	}
 }
