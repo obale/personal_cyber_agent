@@ -2,7 +2,8 @@
  * PCA Reasoning
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
+ * Written by Alex Oberhauser <alexoberhauser@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,6 +28,7 @@ import javax.xml.soap.SOAPMessage;
  * is only to parse the messages and not to reason about it.
  * 
  * @author Alex Oberhauser
+ * @author Corneliu Valentin Stanciu
  */
 public class SOAPEvaluator implements Runnable {
 	private final SOAPMessage message;

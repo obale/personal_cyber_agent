@@ -2,7 +2,8 @@
  * PCA Communication
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
+ * Written by Alex Oberhauser <alexoberhauser@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,6 +33,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import to.networld.cyberagent.common.log.Logging;
+import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
 import to.networld.cyberagent.communication.common.ActionURIHandler;
 import to.networld.cyberagent.communication.common.ComponentConfig;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
@@ -133,6 +135,7 @@ public class ConnectionHandler extends Thread {
 				
 				try {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
+					CommunicationRequestQueueHandler.newInstance().addLast(soapRequest);
 				} catch (SOAPException e) {
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 				}

@@ -1,8 +1,9 @@
 /**
- * PCA Core
+ * PCA Common
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
+ * Written by Alex Oberhauser <alexoberhauser@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,21 +19,21 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.cyberagent;
+package to.networld.cyberagent.common.queues;
 
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
+import javax.xml.soap.SOAPMessage;
 
-import to.networld.cyberagent.communication.SSLServer;
+/**
+ * @author Alex Oberhauser
+ * @author Corneliu Valentin Stanciu
+ *
+ */
+public class CommunicationRequestQueueHandler extends QueueHandler<SOAPMessage> {
 
-public class MainSSLServer {
+	private static QueueHandler<SOAPMessage> instance = null;
 
-	public static void main(String[] args) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, CertificateException, UnrecoverableKeyException {
-		SSLServer server = SSLServer.newInstance();
-		server.start();
+	public static QueueHandler<SOAPMessage> newInstance() {
+		if ( instance == null ) instance = new QueueHandler<SOAPMessage>(); 
+		return instance;
 	}
 }

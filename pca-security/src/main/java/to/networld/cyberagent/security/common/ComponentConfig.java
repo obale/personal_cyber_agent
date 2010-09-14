@@ -1,8 +1,9 @@
 /**
- * PCA Communication
+ * PCA Security
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
+ * Written by Alex Oberhauser <alexoberhauser@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,5 +25,5 @@ package to.networld.cyberagent.security.common;
  * @author Alex Oberhauser
  */
 public interface ComponentConfig {
-	public static final String COMPONENT_NAME = "communication";
+	public static final String COMPONENT_NAME = "security";
 }

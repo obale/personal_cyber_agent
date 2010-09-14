@@ -2,7 +2,8 @@
  * PCA Communication
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
+ * Written by Alex Oberhauser <alexoberhauser@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -113,8 +114,9 @@ public class SSLServer extends Thread {
 	 * @throws CertificateException
 	 * @throws KeyManagementException
 	 * @throws UnrecoverableKeyException
+	 * @throws InterruptedException 
 	 */
-	public void startServer() throws NoSuchAlgorithmException, IOException, KeyStoreException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+	public void startServer() throws NoSuchAlgorithmException, IOException, KeyStoreException, CertificateException, KeyManagementException, UnrecoverableKeyException, InterruptedException {
 		this.running = true;
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 		
@@ -125,9 +127,17 @@ public class SSLServer extends Thread {
 				+ this.config.getProperty("ssl.port") + "...");
 		
 		while ( this.running ) {
-			SSLSocket socket = (SSLSocket) this.sslServerSocket.accept();
-			threadPool.execute(new ConnectionHandler(socket));
+			try {
+				SSLSocket socket = (SSLSocket) this.sslServerSocket.accept();
+				threadPool.execute(new ConnectionHandler(socket));
+			} catch (IOException e) {
+				if ( this.running == false)
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Closing SSL server socket...");
+				else 
+					throw new IOException();
+			}
 		}
+		threadPool.shutdown();
 	}
 	
 	/**
@@ -158,6 +168,8 @@ public class SSLServer extends Thread {
 		} catch (CertificateException e) {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (IOException e) {
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+		} catch (InterruptedException e) {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		}
 	}

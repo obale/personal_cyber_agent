@@ -2,7 +2,8 @@
  * PCA Security
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
+ * Written by Alex Oberhauser <alexoberhauser@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,6 +37,7 @@ import to.networld.soap.security.interfaces.ICredential;
  * the keys (specially the private keys). 
  * 
  * @author Alex Oberhauser
+ * @author Corneliu Valentin Stanciu
  */
 public class CredentialHandler {
 	private static CredentialHandler instance = null;

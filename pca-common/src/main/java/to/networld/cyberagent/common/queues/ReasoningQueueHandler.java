@@ -1,5 +1,5 @@
 /**
- * PCA Communication
+ * PCA Common
  *
  * Copyright (C) 2010 by Networld Project
  * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
@@ -19,13 +19,22 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.cyberagent.communication.common;
+package to.networld.cyberagent.common.queues;
+
+import javax.xml.soap.SOAPMessage;
 
 /**
+ * 
  * @author Alex Oberhauser
  * @author Corneliu Valentin Stanciu
- * 
+ *
  */
-public interface ComponentConfig {
-	public static final String COMPONENT_NAME = "communication";
+public class ReasoningQueueHandler extends QueueHandler<SOAPMessage> {
+
+	private static QueueHandler<SOAPMessage> instance = null;
+
+	public static QueueHandler<SOAPMessage> newInstance() {
+		if ( instance == null ) instance = new QueueHandler<SOAPMessage>(); 
+		return instance;
+	}
 }

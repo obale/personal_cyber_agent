@@ -1,5 +1,5 @@
 /**
- * PCA Communication
+ * PCA Common
  *
  * Copyright (C) 2010 by Networld Project
  * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
@@ -19,13 +19,31 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.cyberagent.communication.common;
+package to.networld.cyberagent.common.queues;
+
+import java.util.concurrent.LinkedBlockingDeque;
+
 
 /**
+ * 
  * @author Alex Oberhauser
  * @author Corneliu Valentin Stanciu
- * 
+ *
+ * @param <T>
  */
-public interface ComponentConfig {
-	public static final String COMPONENT_NAME = "communication";
+public class QueueHandler<T> {
+
+	protected LinkedBlockingDeque<T> queue = null;
+
+	protected QueueHandler() {
+		this.queue = new LinkedBlockingDeque<T>();
+	}
+
+	public void addLast(T _message) {
+		this.queue.addLast(_message);
+	}
+
+	public T takeFirst() throws InterruptedException {
+		return this.queue.takeFirst();
+	}
 }

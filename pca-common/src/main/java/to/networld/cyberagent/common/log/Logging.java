@@ -2,7 +2,8 @@
  * PCA API/Common
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
+ * Written by Alex Oberhauser <alexoberhauser@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,6 +34,7 @@ import org.apache.log4j.PropertyConfigurator;
  * logging file output format that could be parsed easily.
  * 
  * @author Alex Oberhauser
+ * @author Corneliu Valentin Stanciu
  */
 public abstract class Logging {
 

@@ -2,7 +2,8 @@
  * PCA Security
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
+ * Written by Alex Oberhauser <alexoberhauser@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,6 +36,7 @@ import javax.security.cert.Certificate;
  * or special components. For this purpose a certificate authentication is needed.
  * 
  * @author Alex Oberhauser
+ * @author Corneliu Valentin Stanciu
  */
 public class AccessHandler {
 	private static AccessHandler instance = null;

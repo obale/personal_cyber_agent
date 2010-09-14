@@ -1,9 +1,9 @@
-package to.networld.cyberagent.reasoning.common;
 /**
- * PCA Communication
+ * PCA Reasoning
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
+ * Written by Alex Oberhauser <alexoberhauser@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,9 +19,11 @@ package to.networld.cyberagent.reasoning.common;
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
+package to.networld.cyberagent.reasoning.common;
 
 /**
  * @author Alex Oberhauser
+ * @author Corneliu Valentin Stanciu
  */
 public interface ComponentConfig {
 	public static final String COMPONENT_NAME = "reasoning";

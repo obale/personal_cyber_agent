@@ -46,7 +46,7 @@
                                         <archive>
                                                 <manifest>
                                                         <addClasspath>true</addClasspath>
-                                                        <mainClass>to.networld.cyberagent.MainSSLServer</mainClass>
+                                                        <mainClass>to.networld.cyberagent.PCADaemon</mainClass>
                                                 </manifest>
                                         </archive>
                                 </configuration>
