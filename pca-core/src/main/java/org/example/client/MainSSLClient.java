@@ -80,10 +80,10 @@ public class MainSSLClient {
 		String password = config.getProperty("keystore.password");
 		
 		ICredential johnCredential = new Credential(pkcs12File, "johndoe", "johndoe", publicKeystoreFile, password);
+		message.saveChanges();
 		
 		secMessage.encryptSOAPMessage(encryptionPart , johnCredential, "rootca");
 		
-		message.saveChanges();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		secMessage.printSOAPMessage(outputStream);
 		return new String(outputStream.toByteArray());

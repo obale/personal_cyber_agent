@@ -30,6 +30,11 @@
 
         <dependencies>
                 <dependency>
+                        <groupId>to.networld.cyberagent</groupId>
+                        <artifactId>pca-common</artifactId>
+                        <version>0.1-SNAPSHOT</version>
+                </dependency>
+                <dependency>
                         <groupId>to.networld.semantic</groupId>
                         <artifactId>scrawler</artifactId>
                         <version>0.2</version>

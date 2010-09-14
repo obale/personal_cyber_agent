@@ -25,22 +25,16 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.UUID;
 
 import javax.net.ssl.SSLSocket;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.ws.security.components.crypto.CredentialException;
-
+import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.communication.common.ActionURIHandler;
+import to.networld.cyberagent.communication.common.ComponentConfig;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
-import to.networld.cyberagent.monitoring.Logging;
-import to.networld.cyberagent.security.SecSOAPMessageHandler;
-import to.networld.soap.security.security.SOAPSecMessageFactory;
 
 /**
  * The class that handles a single connection to the client. The purpose of this
@@ -106,10 +100,10 @@ public class ConnectionHandler extends Thread {
 
 	@Override
 	public void run() {
-		Logging.getLogger().debug("[" + this.clientID + "] Connection established!");
+		Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Connection established!");
 		try {
 			this.socket.startHandshake();
-			Logging.getLogger().debug("[" + this.clientID + "] Handshake successful!");
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Handshake successful!");
 			
 			/*
 			 * Parse the received HTTP header.
@@ -127,7 +121,7 @@ public class ConnectionHandler extends Thread {
 				 * Parse the received request.
 				 */
 				StringBuffer request = this.readRequest(size);
-				Logging.getLogger().debug("[" + this.clientID + "] Message of type '" + 
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Message of type '" + 
 						header.getContentType() +  "' received from client '" + 
 						header.getUserAgent() + "': '" + request.toString().replace("\n", "\\n") + "'");
 				
@@ -139,42 +133,33 @@ public class ConnectionHandler extends Thread {
 				
 				try {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
-					SecSOAPMessageHandler.newInstance().getSOAPMessage(SOAPSecMessageFactory.newInstance(soapRequest));
-					soapRequest.writeTo(System.err);
 				} catch (SOAPException e) {
-					Logging.getLogger().error(e.getLocalizedMessage());
-				} catch (KeyStoreException e) {
-					Logging.getLogger().error(e.getLocalizedMessage());
-				} catch (NoSuchAlgorithmException e) {
-					Logging.getLogger().error(e.getLocalizedMessage());
-				} catch (CertificateException e) {
-					Logging.getLogger().error(e.getLocalizedMessage());
-				} catch (CredentialException e) {
-					Logging.getLogger().error(e.getLocalizedMessage());
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 				}
+				
 				/*
 				 * Send OK to the client.
 				 */
 				this.sendSOAPStatus(UUID.randomUUID().toString(), "OK");
 			} else {
-				Logging.getLogger().error("[" + this.clientID + "] Unauthorized access with User-Agent '" + header.getUserAgent() + "'");
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] Unauthorized access with User-Agent '" + header.getUserAgent() + "'");
 				this.sendLine("HTTP/1.1 412 Precondition Failed");
 				this.sendLine("Content-Type: text/plain; charset=utf-8");
 				this.sendLine("");
 				this.sendLine("Are you sure that you know what you are doing?");
 			}
 		} catch (IOException e) {
-			Logging.getLogger().error("[" + this.clientID + "] " + e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
 		} catch (NullPointerException e) {
-			Logging.getLogger().error("[" + this.clientID + "] " + e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
 		} catch (NumberFormatException e) {
 			try {
 				this.sendLine("HTTP/1.1 411 Length Required");
 				this.sendLine("");
 			} catch (IOException e1) {
-				Logging.getLogger().error("[" + this.clientID + "] " + e1.getLocalizedMessage());
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e1.getLocalizedMessage());
 			}
-			Logging.getLogger().error("[" + this.clientID + "] NumberFormatException : " + e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] NumberFormatException : " + e.getLocalizedMessage());
 		} finally {
 			try {
 				if ( reader != null )
@@ -182,9 +167,9 @@ public class ConnectionHandler extends Thread {
 				if ( writer != null )
 					this.writer.close();
 				this.socket.close();
-				Logging.getLogger().debug("[" + clientID + "] Connection closed!");
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + clientID + "] Connection closed!");
 			} catch (IOException e) {
-				Logging.getLogger().error("[" + clientID + "] " + e.getLocalizedMessage());
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + clientID + "] " + e.getLocalizedMessage());
 			}
 		}
 	}

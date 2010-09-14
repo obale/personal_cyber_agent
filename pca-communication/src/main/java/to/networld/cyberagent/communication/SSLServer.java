@@ -39,7 +39,9 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 
-import to.networld.cyberagent.monitoring.Logging;
+import to.networld.cyberagent.communication.common.ComponentConfig;
+
+import to.networld.cyberagent.common.log.Logging;
 
 /**
  * SSL server implementation that uses part of the HTTP/1.1 specification.
@@ -77,7 +79,7 @@ public class SSLServer extends Thread {
 	 */
 	private SSLServerSocket createSSLServerSocket() throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
 		SSLContext sslContext = SSLContext.getInstance(this.config.getProperty("ssl.type"));
-		
+
 		KeyStore keystore = KeyStore.getInstance(this.config.getProperty("keystore.type"));
 		keystore.load(SSLServer.class.getResourceAsStream(this.config.getProperty("keystore.file")), 
 				this.config.getProperty("keystore.password").toCharArray());
@@ -94,9 +96,9 @@ public class SSLServer extends Thread {
 
 		try {
 			X509Certificate cert = (X509Certificate) keystore.getCertificate(this.config.getProperty("certificate.alias"));
-			Logging.getLogger().info("Used X.509 certificate: " + cert.getIssuerDN());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Used X.509 certificate: " + cert.getIssuerDN());
 		} catch (NullPointerException e) {
-			Logging.getLogger().error("Information for SSL certificate not found!");
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("Information for SSL certificate not found!");
 		}
 		
 		return socket;
@@ -119,7 +121,7 @@ public class SSLServer extends Thread {
 		this.sslServerSocket = this.createSSLServerSocket();
 		this.sslServerSocket.setNeedClientAuth(false); // TODO: Is it useful to authenticate here and not in a later step within the SOAP message?
 		
-		Logging.getLogger().info("Listening on https://" + this.config.getProperty("ssl.host") + ":"
+		Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Listening on https://" + this.config.getProperty("ssl.host") + ":"
 				+ this.config.getProperty("ssl.port") + "...");
 		
 		while ( this.running ) {
@@ -146,17 +148,17 @@ public class SSLServer extends Thread {
 		try {
 			this.startServer();
 		} catch (KeyManagementException e) {
-			Logging.getLogger().error(e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (UnrecoverableKeyException e) {
-			Logging.getLogger().error(e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (NoSuchAlgorithmException e) {
-			Logging.getLogger().error(e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (KeyStoreException e) {
-			Logging.getLogger().error(e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (CertificateException e) {
-			Logging.getLogger().error(e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (IOException e) {
-			Logging.getLogger().error(e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		}
 	}
 }

@@ -29,6 +29,11 @@
 
         <dependencies>
                 <dependency>
+                        <groupId>to.networld.cyberagent</groupId>
+                        <artifactId>pca-common</artifactId>
+                        <version>0.1-SNAPSHOT</version>
+                </dependency>
+                <dependency>
                         <groupId>to.networld.soap.security</groupId>
                         <artifactId>soap_security_framework</artifactId>
                         <version>0.2-SNAPSHOT</version>

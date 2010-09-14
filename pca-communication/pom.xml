@@ -22,12 +22,7 @@
         <dependencies>
                 <dependency>
                         <groupId>to.networld.cyberagent</groupId>
-                        <artifactId>pca-security</artifactId>
-                        <version>0.1-SNAPSHOT</version>
-                </dependency>
-                <dependency>
-                        <groupId>to.networld.cyberagent</groupId>
-                        <artifactId>pca-monitoring</artifactId>
+                        <artifactId>pca-common</artifactId>
                         <version>0.1-SNAPSHOT</version>
                 </dependency>
         </dependencies>

@@ -1,5 +1,5 @@
 /**
- * PCA Monitoring
+ * PCA API/Common
  *
  * Copyright (C) 2010 by Networld Project
  * Written by Alex Oberhauser <oberhauseralex@networld.to>
@@ -18,7 +18,7 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.cyberagent.monitoring;
+package to.networld.cyberagent.common.log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,10 +37,10 @@ import org.apache.log4j.PropertyConfigurator;
 public abstract class Logging {
 
 	private static final InputStream configIS = 
-		Logging.class.getClassLoader().getResourceAsStream("to/networld/cyberagent/monitoring/log4j.properties");
+		Logging.class.getClassLoader().getResourceAsStream("to/networld/cyberagent/common/log/log4j.properties");
 	
-	public static Logger getLogger() {
-		Logger log = Logger.getLogger("to.networld.cyberagent");
+	public static Logger getLogger(String _componentName) {
+		Logger log = Logger.getLogger("to.networld.cyberagent." + _componentName);
 		if ( configIS != null ) {
 		    Properties props = new Properties();
 		    try {
