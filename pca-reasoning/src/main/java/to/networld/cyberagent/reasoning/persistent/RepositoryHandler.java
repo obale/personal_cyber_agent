@@ -23,6 +23,7 @@ package to.networld.cyberagent.reasoning.persistent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
@@ -44,9 +45,11 @@ public class RepositoryHandler {
 	private ValueFactory valueFactory;
 	private RepositoryConnection connection;
 	
-	private RepositoryHandler() {
-		File dataDir = new File("/tmp/repos");
-		this.repos = new SailRepository(new MemoryStore(dataDir));
+	private RepositoryHandler() throws IOException {
+		Properties prop = new Properties();
+		prop.load(RepositoryHandler.class.getClassLoader().getResourceAsStream("to/networld/cyberagent/reasoning/default.properties"));
+		String dataDir = prop.getProperty("pca.persistent.datadir");
+		this.repos = new SailRepository(new MemoryStore(new File(dataDir)));
 	}
 	
 	public void init() throws RepositoryException {
@@ -65,10 +68,12 @@ public class RepositoryHandler {
 	}
 	
 	public void clean() throws RepositoryException {
+		this.connection.commit();
+		this.connection.close();
 		this.repos.shutDown();
 	}
 	
-	public static RepositoryHandler newInstance() {
+	public static RepositoryHandler newInstance() throws IOException {
 		if ( instance == null ) instance = new RepositoryHandler();
 		return instance;
 	}
