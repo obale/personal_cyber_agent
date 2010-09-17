@@ -46,12 +46,12 @@ public class CredentialHandler {
 	
 	private CredentialHandler() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
 		this.config = new Properties();
-		this.config.load(CredentialHandler.class.getResourceAsStream("security.properties"));
-		
-		this.credential = new Credential(CredentialHandler.class.getResource(this.config.getProperty("security.pkcs12file")).getFile(), 
+		this.config.load(CredentialHandler.class.getClassLoader().getResourceAsStream("to/networld/cyberagent/security/security.properties"));
+
+		this.credential = new Credential(CredentialHandler.class.getClassLoader().getResource(this.config.getProperty("security.pkcs12file")).getFile(),
 				this.config.getProperty("security.pkcs12alias"),
 				this.config.getProperty("security.pkcs12password"),
-				CredentialHandler.class.getResource(this.config.getProperty("security.keystore")).getFile(),
+				CredentialHandler.class.getClassLoader().getResource(this.config.getProperty("security.keystore")).getFile(),
 				this.config.getProperty("security.password"));
 	}
 	

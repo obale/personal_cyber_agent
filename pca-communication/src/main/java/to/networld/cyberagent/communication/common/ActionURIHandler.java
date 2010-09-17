@@ -35,4 +35,8 @@ public interface ActionURIHandler {
 	public static final String REQUEST_ACTION = ACTION_PREFIX + "Request";
 	public static final String RESPONSE_ACTION = ACTION_PREFIX + "Response";
 	public static final String STATUS_ACTION = ACTION_PREFIX + "Status";
+	
+	public static final String STORE_ACTION = ACTION_PREFIX + "Store";
+	public static final String REMOVE_ACTION = ACTION_PREFIX + "Remove";
+	public static final String MODIFY_ACTION = ACTION_PREFIX + "Modify";
 }

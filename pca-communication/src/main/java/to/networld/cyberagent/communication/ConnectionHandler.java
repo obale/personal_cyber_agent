@@ -107,31 +107,21 @@ public class ConnectionHandler extends Thread {
 			this.socket.startHandshake();
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Handshake successful!");
 			
-			/*
-			 * Parse the received HTTP header.
-			 */
 			String hline = null;
 			StringBuffer rawHeader = new StringBuffer();
 			while ( !(hline = this.reader.readLine()).equals("") ) {
 				rawHeader.append(hline + "\n");
 			}
 			HTTPHeader header = new HTTPHeader(rawHeader);
+			
 			if ( header.getSOAPAction() != null ) {
 				int size = Integer.valueOf(header.getContentLength());
 
-				/*
-				 * Parse the received request.
-				 */
 				StringBuffer request = this.readRequest(size);
+				
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Message of type '" + 
 						header.getContentType() +  "' received from client '" + 
 						header.getUserAgent() + "': '" + request.toString().replace("\n", "\\n") + "'");
-				
-				/**
-				 * TODO: The StringBuffer response is the message from the client.
-				 *       Handle that message!!! For example call the classes that checks
-				 *       the security constraints.
-				 */
 				
 				try {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());

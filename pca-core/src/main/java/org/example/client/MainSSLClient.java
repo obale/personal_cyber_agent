@@ -95,7 +95,7 @@ public class MainSSLClient {
 				"Header"));
 		
 		Properties config = new Properties();
-		config.load(MainSSLClient.class.getResourceAsStream("default.properties"));
+		config.load(MainSSLClient.class.getClassLoader().getResourceAsStream("org/example/client/default.properties"));
 		
 		
 		String pkcs12File = MainSSLClient.class.getResource(config.getProperty("pcks12.file")).getFile();

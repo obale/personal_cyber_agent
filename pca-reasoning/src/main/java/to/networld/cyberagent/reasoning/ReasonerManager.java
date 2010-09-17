@@ -20,6 +20,7 @@
  */
 package to.networld.cyberagent.reasoning;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.xml.soap.SOAPException;
@@ -27,7 +28,6 @@ import javax.xml.soap.SOAPMessage;
 
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.QueueHandler;
-import to.networld.cyberagent.common.queues.ReasoningQueueHandler;
 import to.networld.cyberagent.common.queues.SecurityQueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
 
@@ -35,12 +35,11 @@ import to.networld.cyberagent.reasoning.common.ComponentConfig;
  * 
  * @author Corneliu Valentin Stanciu
  * @author Alex Oberhauser
- *
  */
 public class ReasonerManager extends Thread{
 	private static ReasonerManager instance = null;
-	private QueueHandler<SOAPMessage> inputQueue = null;
-	private QueueHandler<SOAPMessage> outputQueue = null;
+	private final QueueHandler<SOAPMessage> inputQueue;
+//	private final QueueHandler<SOAPMessage> outputQueue = null;
 	private boolean running = true;
 	
 	public static ReasonerManager newInstance() {
@@ -51,7 +50,7 @@ public class ReasonerManager extends Thread{
 	public ReasonerManager() {
 		this.setName("Reasoner");
 		this.inputQueue = SecurityQueueHandler.newInstance();
-		this.outputQueue = ReasoningQueueHandler.newInstance();
+//		this.outputQueue = ReasoningQueueHandler.newInstance();
 	}
 	
 	@Override
@@ -63,8 +62,10 @@ public class ReasonerManager extends Thread{
 				 * TODO: Implementing the reasoning part.
 				 */
 				SOAPMessage message = this.inputQueue.takeFirst();
-				message.writeTo(System.err);
-				System.err.println();
+				
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				message.writeTo(os);
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug(os.toString().replace("\n", "\\n") + "'");
 			} catch (InterruptedException e) {
 				if ( this.running == false )
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Interrupting reading from queue...");
@@ -80,7 +81,7 @@ public class ReasonerManager extends Thread{
 	
 	public void stopReasoner() throws IOException, InterruptedException {
 		this.running = false;
-		Thread.sleep(15000);
+		Thread.sleep(1500);
 		this.interrupt();
 	}
 }

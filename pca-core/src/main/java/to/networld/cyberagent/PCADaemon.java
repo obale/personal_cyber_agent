@@ -70,8 +70,9 @@ public class PCADaemon extends Thread {
 		PCADaemon daemon = new PCADaemon();
 		daemon.start();
 		
+		/*
 		Thread.sleep(15000);
-		
 		daemon.shutdownDaemon();
+        */
 	}
 }
