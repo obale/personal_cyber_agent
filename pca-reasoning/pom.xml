@@ -11,6 +11,27 @@
                         <name>Networld Repository</name>
                         <url>http://repo1.networld.to</url>
                 </repository>
+                <repository>
+                        <id>semweb4j-repo</id>
+                        <name>Semweb4j.org maven repo</name>
+                        <url>http://semweb4j.org/repo/</url>
+                        <releases>
+                                <enabled>true</enabled>
+                        </releases>
+                </repository>
+                <repository>
+                        <id>semweb4j-snapshots</id>
+                        <name>Semweb4j.org maven snapshot repo</name>
+                        <url>http://semweb4j.org/snapshots/</url>
+                        <releases>
+                                <enabled>false</enabled>
+                        </releases>
+                        <snapshots>
+                                <enabled>true</enabled>
+                                <updatePolicy>always</updatePolicy>
+                                <checksumPolicy>fail</checksumPolicy>
+                        </snapshots>
+                </repository>
         </repositories>
 
 
@@ -33,6 +54,16 @@
                         <groupId>to.networld.cyberagent</groupId>
                         <artifactId>pca-common</artifactId>
                         <version>0.1-SNAPSHOT</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.semweb4j</groupId>
+                        <artifactId>rdf2go.api</artifactId>
+                        <version>4.7.3</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.openrdf</groupId>
+                        <artifactId>sesame</artifactId>
+                        <version>1.2.7</version>
                 </dependency>
                 <dependency>
                         <groupId>to.networld.semantic</groupId>
