@@ -23,15 +23,25 @@ package to.networld.cyberagent.reasoning.persistent;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
-import org.openrdf.model.Literal;
+import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
 
@@ -59,12 +69,29 @@ public class RepositoryHandler {
 		this.connection.setAutoCommit(true);
 	}
 	
-	public void populateAndDump() throws RDFParseException, RepositoryException, IOException {
-        URI meFOAF = this.valueFactory.createURI("http://devnull.networld.to/foaf.rdf");
-        URI interest = this.valueFactory.createURI("http://xmlns.com/foaf/0.1/interest");
-        Literal someLiteral = this.valueFactory.createLiteral("Artifical Intelligence");
-        
-        this.connection.add(meFOAF, interest, someLiteral); 
+	public void addTriple(Resource _subject, URI _predicate, Value _object) throws RepositoryException {
+		this.connection.add(_subject, _predicate, _object);
+	}
+	
+	public void addRDFStream(InputStream _rdfStream, String _baseURI, RDFFormat _format) throws RDFParseException, RepositoryException, IOException {
+		this.connection.add(_rdfStream, _baseURI, _format);
+	}
+	
+	public void removeTripe(Resource _subject, URI _predicate, Value _object) throws RepositoryException {
+		this.connection.remove(_subject, _predicate, _object);
+	}
+	
+	public TupleQueryResult executeSPARQLQuery(String _query) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
+		TupleQuery tuple = this.connection.prepareTupleQuery(QueryLanguage.SPARQL, _query);
+		return tuple.evaluate();
+	}
+	
+	public RepositoryResult<Statement> getStatements(Resource _subject, URI _predicate, Value _object, boolean _includeInferred) throws RepositoryException {
+		return this.connection.getStatements(_subject, _predicate, _object, _includeInferred);
+	}
+	
+	public ValueFactory getValueFactory() {
+		return this.valueFactory;
 	}
 	
 	public void clean() throws RepositoryException {
