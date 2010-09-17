@@ -30,13 +30,14 @@ package to.networld.cyberagent.communication.common;
  * 
  */
 public interface ActionURIHandler {
-	public static final String ACTION_PREFIX = OntologyHandler.PCA_ACTIONS_NS;
+//	public static final String ACTION_PREFIX = OntologyHandler.PCA_ACTIONS_NS;
+	public static final String ACTION_PREFIX = "urn:pca:";
 	
-	public static final String REQUEST_ACTION = ACTION_PREFIX + "Request";
-	public static final String RESPONSE_ACTION = ACTION_PREFIX + "Response";
-	public static final String STATUS_ACTION = ACTION_PREFIX + "Status";
+	public static final String REQUEST_ACTION = ACTION_PREFIX + "request";
+	public static final String RESPONSE_ACTION = ACTION_PREFIX + "response";
+	public static final String STATUS_ACTION = ACTION_PREFIX + "status";
 	
-	public static final String STORE_ACTION = ACTION_PREFIX + "Store";
-	public static final String REMOVE_ACTION = ACTION_PREFIX + "Remove";
-	public static final String MODIFY_ACTION = ACTION_PREFIX + "Modify";
+	public static final String STORE_ACTION = ACTION_PREFIX + "store";
+	public static final String REMOVE_ACTION = ACTION_PREFIX + "remove";
+	public static final String MODIFY_ACTION = ACTION_PREFIX + "modify";
 }
