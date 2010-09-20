@@ -24,6 +24,9 @@ package to.networld.cyberagent.reasoning;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
@@ -31,6 +34,7 @@ import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.QueueHandler;
 import to.networld.cyberagent.common.queues.SecurityQueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
+import to.networld.scrawler.common.Ontologies;
 
 /**
  * 
@@ -59,10 +63,23 @@ public class ReasonerManager extends Thread{
 		
 		while ( this.running ) {
 			try {
-				/**
-				 * TODO: Implementing the reasoning part.
-				 */
 				SOAPMessage message = this.inputQueue.takeFirst();
+				
+				/**
+				 * TODO: Following part is only for testing purpose to see if the
+				 *       location are received from the clients.
+				 */
+				SOAPHeader header = message.getSOAPHeader();
+				try {
+					SOAPElement foafAgent = (SOAPElement)header.getChildElements(new QName(Ontologies.foafURI, "Agent")).next();
+					String foafURI = foafAgent.getAttributeValue(new QName(Ontologies.rdfURI, "resource"));
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Agent '" + foafURI + "' send a request.");
+					
+//					SOAPElement basedNear = (SOAPElement)foafAgent.getChildElements(new QName(Ontologies.foafURI, "based_near")).next();
+				} catch (Exception e) {
+					e.printStackTrace();
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("Location not found in the received SOAP message!");
+				}
 				
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
 				message.writeTo(os);

@@ -35,6 +35,7 @@ import java.security.cert.CertificateException;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
@@ -121,7 +122,6 @@ public class MainSSLClient {
 
 		URL trustedURL = SSLServer.class.getResource(config.getProperty("keystore.trusted"));
 		System.setProperty("javax.net.ssl.trustStore", trustedURL.getPath());
-//		System.setProperty("javax.net.ssl.trustStorePassword", "1234567890");
 
 		SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 		SSLSocket socket = (SSLSocket) factory.createSocket(config.getProperty("ssl.host"), new Integer(config.getProperty("ssl.port")));
@@ -129,7 +129,8 @@ public class MainSSLClient {
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-		socket.startHandshake();
+		SSLSession session = socket.getSession();
+		System.out.println("** TLS Secured Session with: " + session.getPeerPrincipal());
 
 		String messageToSend = createRequest();
 		StringBuffer headerToSend = new StringBuffer();

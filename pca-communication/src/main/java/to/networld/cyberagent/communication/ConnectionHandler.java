@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.UUID;
 
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
@@ -104,8 +105,8 @@ public class ConnectionHandler extends Thread {
 	public void run() {
 		Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Connection established!");
 		try {
-			this.socket.startHandshake();
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Handshake successful!");
+			SSLSession session = this.socket.getSession();
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Session started: " + session.getProtocol());
 			
 			String hline = null;
 			StringBuffer rawHeader = new StringBuffer();

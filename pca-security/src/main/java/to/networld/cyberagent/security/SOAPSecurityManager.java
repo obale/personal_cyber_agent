@@ -68,6 +68,7 @@ public class SOAPSecurityManager extends Thread {
 			try {
 				ISecSOAPMessage secMessage = SOAPSecMessageFactory.newInstance(this.inputQueue.takeFirst());
 				this.outputQueue.addLast(SecSOAPMessageHandler.newInstance().getSOAPMessage(secMessage));
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("Security constraints passed!");
 			} catch (InterruptedException e) {
 				if ( this.running == false )
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Interrupting reading from queue...");
