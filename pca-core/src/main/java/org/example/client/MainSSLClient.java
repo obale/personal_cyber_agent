@@ -32,6 +32,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -70,6 +72,10 @@ public class MainSSLClient {
 	}
 
 	public static String createRequest() throws SOAPException, IOException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, CredentialException {
+		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		String time = formater.format(cal.getTime());
+		
 		ISecSOAPMessage secMessage = SOAPSecMessageFactory.newInstance(15);
 		SOAPMessage message = secMessage.getSOAPMessage();
 		message.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, "utf-8");
@@ -79,6 +85,7 @@ public class MainSSLClient {
 		header.addNamespaceDeclaration(OntologyHandler.FOAF_PREFIX, OntologyHandler.FOAF_NS);
 		header.addNamespaceDeclaration(OntologyHandler.RDF_PREFIX, OntologyHandler.RDF_NS);
 		header.addNamespaceDeclaration(OntologyHandler.GEO_PREFIX, OntologyHandler.GEO_NS);
+		header.addNamespaceDeclaration(OntologyHandler.DC_PREFIX, OntologyHandler.DC_NS);
 
 		SOAPElement element = header.addHeaderElement(new QName(OntologyHandler.FOAF_NS, "Agent", OntologyHandler.FOAF_PREFIX));
 		element.addAttribute(new QName(OntologyHandler.RDF_NS, "resource", OntologyHandler.RDF_PREFIX),
@@ -86,6 +93,7 @@ public class MainSSLClient {
 		
 		SOAPElement basedNearElem = element.addChildElement(new QName(OntologyHandler.FOAF_NS, "based_near", OntologyHandler.FOAF_PREFIX));
 		SOAPElement pointElem = basedNearElem.addChildElement(new QName(OntologyHandler.GEO_NS, "Point", OntologyHandler.GEO_PREFIX));
+		pointElem.addChildElement(new QName(OntologyHandler.DC_NS, "created", OntologyHandler.DC_PREFIX)).addTextNode(time);
 		pointElem.addChildElement(new QName(OntologyHandler.GEO_NS, "lat", OntologyHandler.GEO_PREFIX)).addTextNode("47.124");
 		pointElem.addChildElement(new QName(OntologyHandler.GEO_NS, "long", OntologyHandler.GEO_PREFIX)).addTextNode("11.4345");
 		
