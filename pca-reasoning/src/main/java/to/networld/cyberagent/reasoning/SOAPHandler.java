@@ -23,41 +23,36 @@ package to.networld.cyberagent.reasoning;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.openrdf.rio.RDFFormat;
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.rio.RDFParseException;
 
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.QueueHandler;
 import to.networld.cyberagent.common.queues.SecurityQueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
-import to.networld.cyberagent.reasoning.persistent.RepositoryHandler;
-import to.networld.scrawler.common.Ontologies;
 
 /**
  * 
  * @author Corneliu Valentin Stanciu
  * @author Alex Oberhauser
  */
-public class ReasonerManager extends Thread{
-	private static ReasonerManager instance = null;
+public class SOAPHandler extends Thread{
+	private static SOAPHandler instance = null;
 	private final QueueHandler<SOAPMessage> inputQueue;
 //	private final QueueHandler<SOAPMessage> outputQueue = null;
 	private boolean running = true;
 	
-	public static ReasonerManager newInstance() {
-		if ( instance == null ) instance = new ReasonerManager();
+	public static SOAPHandler newInstance() {
+		if ( instance == null ) instance = new SOAPHandler();
 		return instance;
 	}
 	
-	public ReasonerManager() {
+	public SOAPHandler() {
 		this.setName("Reasoner");
 		this.inputQueue = SecurityQueueHandler.newInstance();
 //		this.outputQueue = ReasoningQueueHandler.newInstance();
@@ -65,33 +60,13 @@ public class ReasonerManager extends Thread{
 	
 	@Override
 	public void run() {
-		
 		while ( this.running ) {
 			try {
 				SOAPMessage message = this.inputQueue.takeFirst();
 				
-				/**
-				 * TODO: Following part is only for testing purpose to see if the
-				 *       location are received from the clients.
-				 */
 				SOAPHeader header = message.getSOAPHeader();
-				try {
-					SOAPElement foafAgent = (SOAPElement)header.getChildElements(new QName(Ontologies.foafURI, "Agent")).next();
-					String foafURI = foafAgent.getAttributeValue(new QName(Ontologies.rdfURI, "resource"));
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Agent '" + foafURI + "' send a request.");
-//					SOAPElement basedNear = (SOAPElement)foafAgent.getChildElements(new QName(Ontologies.foafURI, "based_near")).next();
-					
-					RepositoryHandler reposHandler = RepositoryHandler.newInstance();
-					reposHandler.init();
-					URL url = new URL(foafURI);
-					URLConnection con = url.openConnection();
-					con.connect();
-					reposHandler.addRDFStream(con.getInputStream(), url.toExternalForm(), RDFFormat.RDFXML);
-					reposHandler.clean();
-				} catch (Exception e) {
-					e.printStackTrace();
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("Location not found in the received SOAP message!");
-				}
+				MetaInformation meta = new MetaInformation(header);
+				meta.store();
 				
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
 				message.writeTo(os);
@@ -104,6 +79,10 @@ public class ReasonerManager extends Thread{
 			} catch (SOAPException e) {
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 			} catch (IOException e) {
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			} catch (RepositoryException e) {
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			} catch (RDFParseException e) {
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 			}
 		}

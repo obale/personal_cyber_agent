@@ -88,14 +88,14 @@ public class MainSSLClient {
 		header.addNamespaceDeclaration(OntologyHandler.DC_PREFIX, OntologyHandler.DC_NS);
 
 		SOAPElement element = header.addHeaderElement(new QName(OntologyHandler.FOAF_NS, "Agent", OntologyHandler.FOAF_PREFIX));
-		element.addAttribute(new QName(OntologyHandler.RDF_NS, "resource", OntologyHandler.RDF_PREFIX),
+		element.addAttribute(new QName(OntologyHandler.RDF_NS, "about", OntologyHandler.RDF_PREFIX),
 				"http://devnull.networld.to/foaf.rdf#me");
 		
 		SOAPElement basedNearElem = element.addChildElement(new QName(OntologyHandler.FOAF_NS, "based_near", OntologyHandler.FOAF_PREFIX));
 		SOAPElement pointElem = basedNearElem.addChildElement(new QName(OntologyHandler.GEO_NS, "Point", OntologyHandler.GEO_PREFIX));
 		pointElem.addChildElement(new QName(OntologyHandler.DC_NS, "created", OntologyHandler.DC_PREFIX)).addTextNode(time);
 		pointElem.addChildElement(new QName(OntologyHandler.GEO_NS, "lat", OntologyHandler.GEO_PREFIX)).addTextNode("47.124");
-		pointElem.addChildElement(new QName(OntologyHandler.GEO_NS, "long", OntologyHandler.GEO_PREFIX)).addTextNode("11.4345");
+		pointElem.addChildElement(new QName(OntologyHandler.GEO_NS, "long", OntologyHandler.GEO_PREFIX)).addTextNode("22.1234");
 		
 		Vector<WSEncryptionPart> encryptionPart = new Vector<WSEncryptionPart>();
 		encryptionPart.add(new WSEncryptionPart(

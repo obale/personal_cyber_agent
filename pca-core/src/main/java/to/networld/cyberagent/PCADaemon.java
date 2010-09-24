@@ -24,7 +24,7 @@ package to.networld.cyberagent;
 import java.io.IOException;
 
 import to.networld.cyberagent.communication.SSLServer;
-import to.networld.cyberagent.reasoning.ReasonerManager;
+import to.networld.cyberagent.reasoning.SOAPHandler;
 import to.networld.cyberagent.security.SOAPSecurityManager;
 
 /**
@@ -35,7 +35,7 @@ import to.networld.cyberagent.security.SOAPSecurityManager;
 public class PCADaemon extends Thread {
 	private SSLServer server = null;
 	private SOAPSecurityManager secManager = null;
-	private ReasonerManager resManager = null;
+	private SOAPHandler resManager = null;
 	
 	private PCADaemon() {
 		this.setName("PCADaemon");
@@ -50,7 +50,7 @@ public class PCADaemon extends Thread {
 			this.secManager = SOAPSecurityManager.newInstance();
 			this.secManager.start();
 		
-			this.resManager = ReasonerManager.newInstance();
+			this.resManager = SOAPHandler.newInstance();
 			this.resManager.start();
 		} catch (Exception e) {
 			e.printStackTrace();

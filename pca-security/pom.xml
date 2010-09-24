@@ -36,7 +36,7 @@
                 <dependency>
                         <groupId>to.networld.soap.security</groupId>
                         <artifactId>soap_security_framework</artifactId>
-                        <version>0.2-SNAPSHOT</version>
+                        <version>0.2</version>
                 </dependency>
         </dependencies>
 
