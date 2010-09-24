@@ -40,10 +40,14 @@ import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
+import org.openrdf.repository.manager.RemoteRepositoryManager;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
+
+import to.networld.cyberagent.common.log.Logging;
+import to.networld.cyberagent.reasoning.common.ComponentConfig;
 
 /**
  * @author Alex Oberhauser
@@ -51,15 +55,30 @@ import org.openrdf.sail.memory.MemoryStore;
  */
 public class RepositoryHandler {
 	private static RepositoryHandler instance = null;
-	private final Repository repos;
+	private Repository repos;
 	private ValueFactory valueFactory;
 	private RepositoryConnection connection;
+	
+	
+	public static RepositoryHandler newInstance() throws IOException {
+		if ( instance == null ) instance = new RepositoryHandler();
+		return instance;
+	}
 	
 	private RepositoryHandler() throws IOException {
 		Properties prop = new Properties();
 		prop.load(RepositoryHandler.class.getClassLoader().getResourceAsStream("to/networld/cyberagent/reasoning/default.properties"));
-		String dataDir = prop.getProperty("pca.persistent.datadir");
-		this.repos = new SailRepository(new MemoryStore(new File(dataDir)));
+		String remoteRepos = prop.getProperty("pca.persistent.remoteurl");
+		String remoteDB = prop.getProperty("pca.persistent.remotedb");
+		try {
+			RemoteRepositoryManager remRepManager = RemoteRepositoryManager.getInstance(remoteRepos);
+			this.repos = remRepManager.getRepository(remoteDB);
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Connected to the remote repository '" + remoteRepos + "'.");
+		} catch (Exception e) {
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).warn("Failed to connect to the remote repository '" + remoteRepos + "'!");
+			String dataDir = prop.getProperty("pca.persistent.datadir");
+			this.repos = new SailRepository(new MemoryStore(new File(dataDir)));
+		}
 	}
 	
 	public void init() throws RepositoryException {
@@ -98,10 +117,5 @@ public class RepositoryHandler {
 		this.connection.commit();
 		this.connection.close();
 		this.repos.shutDown();
-	}
-	
-	public static RepositoryHandler newInstance() throws IOException {
-		if ( instance == null ) instance = new RepositoryHandler();
-		return instance;
 	}
 }

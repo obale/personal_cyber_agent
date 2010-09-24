@@ -23,6 +23,8 @@ package to.networld.cyberagent.reasoning;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
@@ -30,10 +32,13 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.openrdf.rio.RDFFormat;
+
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.QueueHandler;
 import to.networld.cyberagent.common.queues.SecurityQueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
+import to.networld.cyberagent.reasoning.persistent.RepositoryHandler;
 import to.networld.scrawler.common.Ontologies;
 
 /**
@@ -74,8 +79,15 @@ public class ReasonerManager extends Thread{
 					SOAPElement foafAgent = (SOAPElement)header.getChildElements(new QName(Ontologies.foafURI, "Agent")).next();
 					String foafURI = foafAgent.getAttributeValue(new QName(Ontologies.rdfURI, "resource"));
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Agent '" + foafURI + "' send a request.");
-					
 //					SOAPElement basedNear = (SOAPElement)foafAgent.getChildElements(new QName(Ontologies.foafURI, "based_near")).next();
+					
+					RepositoryHandler reposHandler = RepositoryHandler.newInstance();
+					reposHandler.init();
+					URL url = new URL(foafURI);
+					URLConnection con = url.openConnection();
+					con.connect();
+					reposHandler.addRDFStream(con.getInputStream(), url.toExternalForm(), RDFFormat.RDFXML);
+					reposHandler.clean();
 				} catch (Exception e) {
 					e.printStackTrace();
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("Location not found in the received SOAP message!");
