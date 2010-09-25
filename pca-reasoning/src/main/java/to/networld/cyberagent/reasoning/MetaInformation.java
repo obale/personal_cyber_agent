@@ -48,6 +48,9 @@ import to.networld.cyberagent.reasoning.persistent.RepositoryHandler;
 import to.networld.scrawler.common.Ontologies;
 
 /**
+ * Extracts and stores the information related to an foaf:Agent entity.
+ * The information are gained from the SOAP header part.
+ * 
  * @author Alex Oberhauser
  */
 public class MetaInformation {
@@ -77,6 +80,11 @@ public class MetaInformation {
 			Iterator<?> iter = this.header.getChildElements(new QName(Ontologies.foafURI, "Agent"));
 			while ( iter.hasNext() ) {
 				SOAPElement foafAgent = (SOAPElement)iter.next();
+				/*
+				 * Remove unused namespace declarations. 
+				 */
+				foafAgent.removeNamespaceDeclaration("SOAP-ENV");
+				foafAgent.removeNamespaceDeclaration("SOAP-SEC");
 				Node node = (Node)foafAgent;
 				InputStream is = new ByteArrayInputStream(nodeToString(node).getBytes());
 				reposHandler.addRDFStream(is, foafAgent.getAttribute("rdf:resource"), RDFFormat.RDFXML);

@@ -67,6 +67,9 @@ public class SOAPSecurityManager extends Thread {
 		while ( this.running ) {
 			try {
 				ISecSOAPMessage secMessage = SOAPSecMessageFactory.newInstance(this.inputQueue.takeFirst());
+				/**
+				 * XXX: There is no authentication/authorization. An unsecure message passes always this tests. 
+				 */
 				this.outputQueue.addLast(SecSOAPMessageHandler.newInstance().getSOAPMessage(secMessage));
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("Security constraints passed!");
 			} catch (InterruptedException e) {

@@ -64,6 +64,8 @@ public class SOAPHandler extends Thread{
 			try {
 				SOAPMessage message = this.inputQueue.takeFirst();
 				
+				new AttachmentHandler(message).printInformation();
+				
 				SOAPHeader header = message.getSOAPHeader();
 				MetaInformation meta = new MetaInformation(header);
 				meta.store();
