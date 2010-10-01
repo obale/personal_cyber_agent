@@ -25,6 +25,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
@@ -73,10 +75,10 @@ public class MetaInformation {
 		return sw.toString();
 	}
 	
-	public void store() throws IOException, RepositoryException, RDFParseException {
+	public void store() throws IOException {
 		RepositoryHandler reposHandler = RepositoryHandler.newInstance();
-		reposHandler.init();
 		try {
+			reposHandler.init();
 			Iterator<?> iter = this.header.getChildElements(new QName(Ontologies.foafURI, "Agent"));
 			while ( iter.hasNext() ) {
 				SOAPElement foafAgent = (SOAPElement)iter.next();
@@ -87,10 +89,22 @@ public class MetaInformation {
 				foafAgent.removeNamespaceDeclaration("SOAP-SEC");
 				Node node = (Node)foafAgent;
 				InputStream is = new ByteArrayInputStream(nodeToString(node).getBytes());
-				reposHandler.addRDFStream(is, foafAgent.getAttribute("rdf:resource"), RDFFormat.RDFXML);
+				String foafURLStr = foafAgent.getAttribute("rdf:about");
+				reposHandler.addRDFStream(is, foafURLStr, RDFFormat.RDFXML);
+				URL foafURL = new URL(foafURLStr);
+				URLConnection foafConnection = foafURL.openConnection();
+				reposHandler.addRDFStream(foafConnection.getInputStream(), foafURLStr, RDFFormat.RDFXML);
 			}
+		} catch (RDFParseException e) {
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+		} catch (RepositoryException e) {
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} finally {	
-			reposHandler.clean();
+			try {
+				reposHandler.clean();
+			} catch (RepositoryException e) {
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			}
 		}
 	}
 	

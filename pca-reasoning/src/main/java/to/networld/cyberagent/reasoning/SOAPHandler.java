@@ -28,8 +28,6 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.rio.RDFParseException;
 
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.QueueHandler;
@@ -81,10 +79,6 @@ public class SOAPHandler extends Thread{
 			} catch (SOAPException e) {
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 			} catch (IOException e) {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-			} catch (RepositoryException e) {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-			} catch (RDFParseException e) {
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 			}
 		}

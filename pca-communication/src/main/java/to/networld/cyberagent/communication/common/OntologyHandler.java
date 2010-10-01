@@ -28,10 +28,10 @@ package to.networld.cyberagent.communication.common;
  * @author Corneliu Valentin Stanciu
  */
 public interface OntologyHandler {
-	public static final String PCA_ACTIONS_NS = "http://pca.networld.to/actions.rdf#";
+	public static final String PCA_ACTIONS_NS = "http://cyberagent.networld.to/actions.rdf#";
 	public static final String PCA_ACTIONS_PREFIX = "pca-actions";
 
-	public static final String PCA_NETWORK_NS = "http://pca.networld.to/communication.rdf#";
+	public static final String PCA_NETWORK_NS = "http://cyberagent.networld.to/communication.rdf#";
 	public static final String PCA_NETWORK_PREFIX = "pca-network";
 
 	/*
