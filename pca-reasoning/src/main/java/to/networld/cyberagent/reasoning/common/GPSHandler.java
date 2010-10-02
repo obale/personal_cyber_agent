@@ -28,6 +28,12 @@ import java.math.BigDecimal;
  */
 public abstract class GPSHandler {
 	
+	/**
+	 * Used to convert the raw data (from NMEA specification) to the intern used decimal format.
+	 * 
+	 * @param _nmeaCoordinate The latitude or longitude received from the nmea specification.
+	 * @return The coordinate in decimal.
+	 */
 	public static BigDecimal convertNMEAtoDecimal(double _nmeaCoordinate) {
 		int degree = (int) (_nmeaCoordinate / 100);
 		double minutes = _nmeaCoordinate - 100 * ((double)degree);

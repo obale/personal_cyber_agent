@@ -33,7 +33,7 @@ public class ReasoningQueueHandler extends QueueHandler<SOAPMessage> {
 
 	private static QueueHandler<SOAPMessage> instance = null;
 
-	public static QueueHandler<SOAPMessage> newInstance() {
+	public synchronized static QueueHandler<SOAPMessage> newInstance() {
 		if ( instance == null ) instance = new QueueHandler<SOAPMessage>(); 
 		return instance;
 	}

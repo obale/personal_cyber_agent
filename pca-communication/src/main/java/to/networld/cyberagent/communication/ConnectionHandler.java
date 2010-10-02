@@ -139,7 +139,6 @@ public class ConnectionHandler extends Thread {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
 					ISecSOAPMessage secMessage = SOAPSecMessageFactory.newInstance(soapRequest);
 					soapRequest = SecurityHandler.newInstance().getSOAPMessage(secMessage);
-					
 					CommunicationRequestQueueHandler.newInstance().addLast(soapRequest);
 				} catch (SOAPException e) {
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());

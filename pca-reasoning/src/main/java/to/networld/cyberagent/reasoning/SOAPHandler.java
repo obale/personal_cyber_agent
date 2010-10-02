@@ -28,68 +28,43 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-
 import to.networld.cyberagent.common.log.Logging;
-import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
-import to.networld.cyberagent.common.queues.QueueHandler;
 import to.networld.cyberagent.common.queues.ReasoningQueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
 
 /**
+ * The class that is responsible for the handling of the SOAP message received from
+ * the clients.
  * 
  * @author Corneliu Valentin Stanciu
  * @author Alex Oberhauser
  */
-public class SOAPHandler extends Thread{
-	private static SOAPHandler instance = null;
-	private final QueueHandler<SOAPMessage> inputQueue;
-	private final QueueHandler<SOAPMessage> outputQueue;
-	private boolean running = true;
+public class SOAPHandler extends Thread {
+	private SOAPMessage message; 
 	
-	public static SOAPHandler newInstance() {
-		if ( instance == null ) instance = new SOAPHandler();
-		return instance;
-	}
-	
-	public SOAPHandler() {
-		this.setName("Reasoner");
-		this.inputQueue = CommunicationRequestQueueHandler.newInstance();
-		this.outputQueue = ReasoningQueueHandler.newInstance();
+	public SOAPHandler(SOAPMessage _message) {
+		this.message = _message;
 	}
 	
 	@Override
 	public void run() {
-		while ( this.running ) {
-			try {
-				SOAPMessage message = this.inputQueue.takeFirst();
+//		new AttachmentHandler(this.message).printInformation();
+
+		try {
+			SOAPHeader header = this.message.getSOAPHeader();
+			MetaInformation meta = new MetaInformation(header);
+			meta.store();
+
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			this.message.writeTo(os);
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug(os.toString().replace("\n", "\\n") + "'");
 				
-				new AttachmentHandler(message).printInformation();
-				
-				SOAPHeader header = message.getSOAPHeader();
-				MetaInformation meta = new MetaInformation(header);
-				meta.store();
-				
-				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				message.writeTo(os);
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug(os.toString().replace("\n", "\\n") + "'");
-				
-				this.outputQueue.addLast(message);
-			} catch (InterruptedException e) {
-				if ( this.running == false )
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Interrupting reading from queue...");
-				else
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("Reading from queue was interrupted!");
-			} catch (SOAPException e) {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-			} catch (IOException e) {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-			}
+			ReasoningQueueHandler.newInstance().addLast(this.message);
+		} catch (IOException e) {
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+		} catch (SOAPException e) {
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		}
-	}
-	
-	public void stopReasoner() throws IOException, InterruptedException {
-		this.running = false;
-		Thread.sleep(1500);
-		this.interrupt();
+				
 	}
 }
