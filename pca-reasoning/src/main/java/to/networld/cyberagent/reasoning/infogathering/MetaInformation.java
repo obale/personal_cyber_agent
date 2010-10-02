@@ -60,7 +60,7 @@ public class MetaInformation {
 		this.header = _header;
 	}
 	
-	private String nodeToString(Node node) {
+	private static String nodeToString(Node node) {
 		StringWriter sw = new StringWriter();
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -73,8 +73,8 @@ public class MetaInformation {
 		return sw.toString();
 	}
 	
-	public void store() throws IOException {
-		RepositoryHandler reposHandler = RepositoryHandler.newInstance();
+	public synchronized void store() throws IOException {
+		RepositoryHandler reposHandler = new RepositoryHandler();
 		try {
 			reposHandler.init();
 			Iterator<?> iter = this.header.getChildElements(new QName(Ontologies.foafURI, "Agent"));

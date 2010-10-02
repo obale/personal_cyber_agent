@@ -32,6 +32,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.UUID;
 
+import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.xml.soap.SOAPException;
@@ -115,9 +116,13 @@ public class ConnectionHandler extends Thread {
 		Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Connection established!");
 		try {
 			SSLSession session = this.socket.getSession();
-			X509Certificate clientCert = (X509Certificate) session.getPeerCertificates()[0];
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Session started for user '" + 
-					clientCert.getSubjectDN() + "'");
+			try {
+				X509Certificate clientCert = (X509Certificate) session.getPeerCertificates()[0];
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Session started for user '" + 
+						clientCert.getSubjectDN() + "'");
+			} catch (SSLPeerUnverifiedException e) {
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] Authentication failed!");
+			}
 			
 			String hline = null;
 			StringBuffer rawHeader = new StringBuffer();

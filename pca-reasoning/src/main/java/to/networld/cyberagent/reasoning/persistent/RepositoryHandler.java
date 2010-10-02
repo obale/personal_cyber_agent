@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import net.jcip.annotations.NotThreadSafe;
+
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -56,19 +58,13 @@ import to.networld.cyberagent.reasoning.common.ComponentConfig;
  * @author Alex Oberhauser
  * @author Corneliu Stanciu Valentin
  */
+@NotThreadSafe
 public class RepositoryHandler {
-	private static RepositoryHandler instance = null;
 	private Repository repos;
 	private ValueFactory valueFactory;
 	private RepositoryConnection connection;
 	
-	
-	public static RepositoryHandler newInstance() throws IOException {
-		if ( instance == null ) instance = new RepositoryHandler();
-		return instance;
-	}
-	
-	private RepositoryHandler() throws IOException {
+	public RepositoryHandler() throws IOException {
 		Properties prop = new Properties();
 		prop.load(RepositoryHandler.class.getClassLoader().getResourceAsStream("to/networld/cyberagent/reasoning/default.properties"));
 		String remoteRepos = prop.getProperty("pca.persistent.remoteurl");
