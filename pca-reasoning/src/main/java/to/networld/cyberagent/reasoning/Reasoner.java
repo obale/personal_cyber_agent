@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 
 import javax.xml.soap.SOAPMessage;
 
+import to.networld.cyberagent.common.data.IPPackage;
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
 import to.networld.cyberagent.common.queues.QueueHandler;
@@ -41,7 +42,7 @@ import to.networld.cyberagent.reasoning.common.ComponentConfig;
 public class Reasoner extends Thread {
 	private static Reasoner instance = null;
 	private boolean running = true;
-	private final QueueHandler<SOAPMessage> inputQueue;
+	private final QueueHandler<IPPackage> inputQueue;
 	
 	public static Reasoner newInstance() {
 		if ( instance == null ) instance = new Reasoner();
@@ -59,7 +60,7 @@ public class Reasoner extends Thread {
 		Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Reasoner started...");
 		while ( this.running ) {
 			try {
-				SOAPMessage message = this.inputQueue.takeFirst();
+				SOAPMessage message = this.inputQueue.takeFirst().getSOAPMessage();
 				threadPool.execute(new SOAPHandler(message));
 			} catch (InterruptedException e) {
 				if ( this.running == false )

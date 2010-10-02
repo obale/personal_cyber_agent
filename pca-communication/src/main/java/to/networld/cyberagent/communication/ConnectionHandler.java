@@ -40,6 +40,7 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.ws.security.components.crypto.CredentialException;
 
+import to.networld.cyberagent.common.data.IPPackage;
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
 import to.networld.cyberagent.communication.common.ActionURIHandler;
@@ -144,7 +145,10 @@ public class ConnectionHandler extends Thread {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
 					ISecSOAPMessage secMessage = SOAPSecMessageFactory.newInstance(soapRequest);
 					soapRequest = SecurityHandler.newInstance().getSOAPMessage(secMessage);
-					CommunicationRequestQueueHandler.newInstance().addLast(soapRequest);
+					
+					IPPackage ipp = new IPPackage(soapRequest);
+					ipp.setSSLSocket(this.socket, session);
+					CommunicationRequestQueueHandler.newInstance().addLast(ipp);
 				} catch (SOAPException e) {
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
 				} catch (KeyStoreException e) {

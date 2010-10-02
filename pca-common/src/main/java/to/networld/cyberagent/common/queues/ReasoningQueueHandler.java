@@ -21,7 +21,7 @@
 
 package to.networld.cyberagent.common.queues;
 
-import javax.xml.soap.SOAPMessage;
+import to.networld.cyberagent.common.data.IPPackage;
 
 /**
  * 
@@ -29,12 +29,12 @@ import javax.xml.soap.SOAPMessage;
  * @author Corneliu Valentin Stanciu
  *
  */
-public class ReasoningQueueHandler extends QueueHandler<SOAPMessage> {
+public class ReasoningQueueHandler extends QueueHandler<IPPackage> {
 
-	private static QueueHandler<SOAPMessage> instance = null;
+	private static QueueHandler<IPPackage> instance = null;
 
-	public synchronized static QueueHandler<SOAPMessage> newInstance() {
-		if ( instance == null ) instance = new QueueHandler<SOAPMessage>(); 
+	public synchronized static QueueHandler<IPPackage> newInstance() {
+		if ( instance == null ) instance = new QueueHandler<IPPackage>(); 
 		return instance;
 	}
 }

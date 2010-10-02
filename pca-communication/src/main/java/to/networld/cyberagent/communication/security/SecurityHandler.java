@@ -113,14 +113,17 @@ public class SecurityHandler {
 		/*
 		 *  XXX, TODO: In productive use "socket.setNeedClientAuth(true);", active this line to assure that ALL clients have to authenticate.
 		 */
-//		socket.setNeedClientAuth(true);
-		socket.setWantClientAuth(true);
+		socket.setNeedClientAuth(true);
+//		socket.setWantClientAuth(true);
 		
 		return socket;
 	}
 	
 	/**
 	 * Checks the security constraints and decrypts the message.
+	 * 
+	 * TODO: Check the X.509 certificate, that was used as authorization in the communication layer, against
+	 *       the X.509 certificate that was used for the signing part.
 	 * 
 	 * @param _secMessage The secure message received over the wire.
 	 * @return The clear text and checked SOAP message.

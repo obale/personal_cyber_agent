@@ -28,6 +28,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import to.networld.cyberagent.common.data.IPPackage;
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.ReasoningQueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
@@ -60,7 +61,7 @@ public class SOAPHandler extends Thread {
 			this.message.writeTo(os);
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug(os.toString().replace("\n", "\\n") + "'");
 				
-			ReasoningQueueHandler.newInstance().addLast(this.message);
+			ReasoningQueueHandler.newInstance().addLast(new IPPackage(this.message));
 		} catch (IOException e) {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (SOAPException e) {
