@@ -22,26 +22,21 @@
 package to.networld.cyberagent.communication;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.communication.common.ComponentConfig;
+import to.networld.cyberagent.communication.security.SecurityHandler;
 
 /**
  * SSL server implementation that uses part of the HTTP/1.1 specification.
@@ -51,57 +46,21 @@ import to.networld.cyberagent.communication.common.ComponentConfig;
  */
 public class SSLServer extends Thread {
 	private static SSLServer instance = null;
+	private final SecurityHandler secHandler;
 	private SSLServerSocket sslServerSocket = null;
 	private Properties config = null;
 	private boolean running = true;
 	
-	private SSLServer() throws IOException {
+	private SSLServer() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
 		this.setName("SSLServer");
+		this.secHandler = SecurityHandler.newInstance();
 		this.config = new Properties();
 		this.config.load(SSLServer.class.getResourceAsStream("default.properties"));
 	}
 	
-	public static SSLServer newInstance() throws IOException {
+	public static SSLServer newInstance() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
 		if ( instance == null )	instance = new SSLServer();
 		return instance; 
-	}
-	
-	/**
-	 * Creates a server side SSL socket.
-	 * 
-	 * @return The SSLServerSocket that are listening to the port specified in the configuration file.
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyStoreException
-	 * @throws CertificateException
-	 * @throws IOException
-	 * @throws UnrecoverableKeyException
-	 * @throws KeyManagementException
-	 */
-	private SSLServerSocket createSSLServerSocket() throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
-		SSLContext sslContext = SSLContext.getInstance(this.config.getProperty("ssl.type"));
-
-		KeyStore keystore = KeyStore.getInstance(this.config.getProperty("keystore.type"));
-		keystore.load(SSLServer.class.getResourceAsStream(this.config.getProperty("keystore.file")), 
-				this.config.getProperty("keystore.password").toCharArray());
-		
-		KeyManagerFactory keyManFactory = KeyManagerFactory.getInstance(config.getProperty("keymanager.type"));
-		keyManFactory.init(keystore, this.config.getProperty("keymanager.password").toCharArray());
-		sslContext.init(keyManFactory.getKeyManagers(), null, null);
-		
-		SSLServerSocketFactory sslFactory = sslContext.getServerSocketFactory();
-		
-		SSLServerSocket socket = (SSLServerSocket) sslFactory.createServerSocket(new Integer(this.config.getProperty("ssl.port")), 
-				10, 
-				InetAddress.getByName(this.config.getProperty("ssl.host")));
-
-		try {
-			X509Certificate cert = (X509Certificate) keystore.getCertificate(this.config.getProperty("certificate.alias"));
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Used X.509 certificate: " + cert.getIssuerDN());
-		} catch (NullPointerException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("Information for SSL certificate not found!");
-		}
-		
-		return socket;
 	}
 	
 	/**
@@ -119,8 +78,7 @@ public class SSLServer extends Thread {
 		this.running = true;
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 		
-		this.sslServerSocket = this.createSSLServerSocket();
-		this.sslServerSocket.setNeedClientAuth(false); // TODO: Is it useful to authenticate here and not in a later step within the SOAP message?
+		this.sslServerSocket = this.secHandler.createSSLServerSocket();		
 		
 		Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Listening on https://" + this.config.getProperty("ssl.host") + ":"
 				+ this.config.getProperty("ssl.port") + "...");
@@ -165,7 +123,7 @@ public class SSLServer extends Thread {
 		} catch (KeyStoreException e) {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (CertificateException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
 		} catch (IOException e) {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (InterruptedException e) {

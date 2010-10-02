@@ -22,6 +22,7 @@
 package to.networld.cyberagent.communication.security;
 
 import java.io.IOException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -62,6 +63,10 @@ public class CredentialHandler {
 	
 	protected PublicKey getPublicRootCertificate() throws KeyStoreException { 
 		return this.credential.getPublicKeystore().getCertificate(this.config.getProperty("security.cacert")).getPublicKey();
+	}
+	
+	protected KeyStore getPublicKeyStore() {
+		return this.credential.getPublicKeystore();
 	}
 	
 	protected ICredential getCredential() { return this.credential; }

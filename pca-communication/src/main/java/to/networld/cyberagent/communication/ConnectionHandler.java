@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.UUID;
 
 import javax.net.ssl.SSLSession;
@@ -114,7 +115,9 @@ public class ConnectionHandler extends Thread {
 		Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Connection established!");
 		try {
 			SSLSession session = this.socket.getSession();
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Session started: " + session.getProtocol());
+			X509Certificate clientCert = (X509Certificate) session.getPeerCertificates()[0];
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Session started for user '" + 
+					clientCert.getSubjectDN() + "'");
 			
 			String hline = null;
 			StringBuffer rawHeader = new StringBuffer();
@@ -139,15 +142,15 @@ public class ConnectionHandler extends Thread {
 					
 					CommunicationRequestQueueHandler.newInstance().addLast(soapRequest);
 				} catch (SOAPException e) {
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
 				} catch (KeyStoreException e) {
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 				} catch (NoSuchAlgorithmException e) {
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 				} catch (CertificateException e) {
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
 				} catch (CredentialException e) {
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
 				}
 				
 				/*
@@ -155,7 +158,7 @@ public class ConnectionHandler extends Thread {
 				 */
 				this.sendSOAPStatus(UUID.randomUUID().toString(), "OK");
 			} else {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] Unauthorized access with User-Agent '" + header.getUserAgent() + "'");
+				Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("[" + this.clientID + "] Unknown request with User-Agent '" + header.getUserAgent() + "'");
 				this.sendLine("HTTP/1.1 412 Precondition Failed");
 				this.sendLine("Content-Type: text/plain; charset=utf-8");
 				this.sendLine("");
@@ -172,7 +175,7 @@ public class ConnectionHandler extends Thread {
 			} catch (IOException e1) {
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e1.getLocalizedMessage());
 			}
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] NumberFormatException : " + e.getLocalizedMessage());
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("[" + this.clientID + "] NumberFormatException : " + e.getLocalizedMessage());
 		} finally {
 			try {
 				if ( reader != null )

@@ -25,18 +25,25 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -106,7 +113,6 @@ public class MainSSLClient {
 		Properties config = new Properties();
 		config.load(MainSSLClient.class.getResourceAsStream("default.properties"));
 		
-		
 		String pkcs12File = MainSSLClient.class.getResource(config.getProperty("pcks12.file")).getFile();
 		String publicKeystoreFile = MainSSLClient.class.getResource(config.getProperty("keystore.file")).getFile();
 		String password = config.getProperty("keystore.password");
@@ -120,6 +126,21 @@ public class MainSSLClient {
 		secMessage.printSOAPMessage(outputStream);
 		return new String(outputStream.toByteArray());
 	}
+	
+	private static SSLSocketFactory getFactory(InputStream _keyInput, String _password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
+		  KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+		  KeyStore keyStore = KeyStore.getInstance("PKCS12");
+
+		  keyStore.load(_keyInput, _password.toCharArray());
+
+		  keyManagerFactory.init(keyStore, _password.toCharArray());
+
+		  SSLContext context = SSLContext.getInstance("TLS");
+		  context.init(keyManagerFactory.getKeyManagers(), null, new SecureRandom());
+
+		  return context.getSocketFactory();
+		}
+
 
 	/**
 	 * @param args
@@ -131,7 +152,7 @@ public class MainSSLClient {
 		URL trustedURL = SSLServer.class.getResource(config.getProperty("keystore.trusted"));
 		System.setProperty("javax.net.ssl.trustStore", trustedURL.getPath());
 
-		SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+		SSLSocketFactory factory = MainSSLClient.getFactory(MainSSLClient.class.getResourceAsStream("keys/johndoe.p12"), "johndoe");
 		SSLSocket socket = (SSLSocket) factory.createSocket(config.getProperty("ssl.host"), new Integer(config.getProperty("ssl.port")));
 
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
