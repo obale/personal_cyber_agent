@@ -31,6 +31,7 @@ import javax.xml.soap.SOAPMessage;
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.ReasoningQueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
+import to.networld.cyberagent.reasoning.infogathering.MetaInformation;
 
 /**
  * The class that is responsible for the handling of the SOAP message received from

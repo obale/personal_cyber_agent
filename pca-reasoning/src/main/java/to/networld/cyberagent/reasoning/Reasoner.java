@@ -33,6 +33,9 @@ import to.networld.cyberagent.common.queues.QueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
 
 /**
+ * The handler class that triggers the reasoning for each SOAP message. The implementation
+ * is similar than the SSL server.
+ * 
  * @author Alex Oberhauser
  */
 public class Reasoner extends Thread {

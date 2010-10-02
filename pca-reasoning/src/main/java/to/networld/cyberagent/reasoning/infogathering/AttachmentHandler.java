@@ -19,7 +19,7 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.cyberagent.reasoning;
+package to.networld.cyberagent.reasoning.infogathering;
 
 import java.util.Iterator;
 
