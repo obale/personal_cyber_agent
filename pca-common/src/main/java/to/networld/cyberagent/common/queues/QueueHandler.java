@@ -46,4 +46,8 @@ public class QueueHandler<T> {
 	public T takeFirst() throws InterruptedException {
 		return this.queue.takeFirst();
 	}
+	
+	public int getSize() {
+		return this.queue.size();
+	}
 }

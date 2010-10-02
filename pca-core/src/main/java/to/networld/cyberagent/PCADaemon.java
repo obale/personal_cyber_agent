@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import to.networld.cyberagent.communication.SSLServer;
 import to.networld.cyberagent.reasoning.SOAPHandler;
-import to.networld.cyberagent.security.SOAPSecurityManager;
 
 /**
  * @author Alex Oberhauser
@@ -34,7 +33,6 @@ import to.networld.cyberagent.security.SOAPSecurityManager;
  */
 public class PCADaemon extends Thread {
 	private SSLServer server = null;
-	private SOAPSecurityManager secManager = null;
 	private SOAPHandler resManager = null;
 	
 	private PCADaemon() {
@@ -47,9 +45,6 @@ public class PCADaemon extends Thread {
 			this.server = SSLServer.newInstance();
 			this.server.start();
 		
-			this.secManager = SOAPSecurityManager.newInstance();
-			this.secManager.start();
-		
 			this.resManager = SOAPHandler.newInstance();
 			this.resManager.start();
 		} catch (Exception e) {
@@ -60,8 +55,6 @@ public class PCADaemon extends Thread {
 	public void shutdownDaemon() throws IOException, InterruptedException {
 		if ( this.server != null )
 			this.server.stopServer();
-		if ( this.secManager != null )
-			this.secManager.stopManager();
 		if ( this.resManager != null )
 			this.resManager.stopReasoner();
 	}
@@ -69,10 +62,5 @@ public class PCADaemon extends Thread {
 	public static void main(String[] args) throws Exception {
 		PCADaemon daemon = new PCADaemon();
 		daemon.start();
-		
-		/*
-		Thread.sleep(15000);
-		daemon.shutdownDaemon();
-        */
 	}
 }

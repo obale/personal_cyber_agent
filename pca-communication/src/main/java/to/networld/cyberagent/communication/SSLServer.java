@@ -40,9 +40,8 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 
-import to.networld.cyberagent.communication.common.ComponentConfig;
-
 import to.networld.cyberagent.common.log.Logging;
+import to.networld.cyberagent.communication.common.ComponentConfig;
 
 /**
  * SSL server implementation that uses part of the HTTP/1.1 specification.

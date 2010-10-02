@@ -82,7 +82,6 @@ public class RepositoryHandler {
 			String dataDir = prop.getProperty("pca.persistent.datadir");
 			this.repos = new SailRepository(new MemoryStore(new File(dataDir)));
 		}
-
 	}
 	
 	public void init() throws RepositoryException {

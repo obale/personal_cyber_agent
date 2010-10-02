@@ -25,8 +25,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
@@ -91,9 +89,6 @@ public class MetaInformation {
 				InputStream is = new ByteArrayInputStream(nodeToString(node).getBytes());
 				String foafURLStr = foafAgent.getAttribute("rdf:about");
 				reposHandler.addRDFStream(is, foafURLStr, RDFFormat.RDFXML);
-				URL foafURL = new URL(foafURLStr);
-				URLConnection foafConnection = foafURL.openConnection();
-				reposHandler.addRDFStream(foafConnection.getInputStream(), foafURLStr, RDFFormat.RDFXML);
 			}
 		} catch (RDFParseException e) {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());

@@ -26,6 +26,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.UUID;
 
 import javax.net.ssl.SSLSession;
@@ -33,11 +36,16 @@ import javax.net.ssl.SSLSocket;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.ws.security.components.crypto.CredentialException;
+
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
 import to.networld.cyberagent.communication.common.ActionURIHandler;
 import to.networld.cyberagent.communication.common.ComponentConfig;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
+import to.networld.cyberagent.communication.security.SecurityHandler;
+import to.networld.soap.security.interfaces.ISecSOAPMessage;
+import to.networld.soap.security.security.SOAPSecMessageFactory;
 
 /**
  * The class that handles a single connection to the client. The purpose of this
@@ -126,8 +134,19 @@ public class ConnectionHandler extends Thread {
 				
 				try {
 					SOAPMessage soapRequest = SOAPBuilder.convertStringToSOAP(request.toString());
+					ISecSOAPMessage secMessage = SOAPSecMessageFactory.newInstance(soapRequest);
+					soapRequest = SecurityHandler.newInstance().getSOAPMessage(secMessage);
+					
 					CommunicationRequestQueueHandler.newInstance().addLast(soapRequest);
 				} catch (SOAPException e) {
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+				} catch (KeyStoreException e) {
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+				} catch (NoSuchAlgorithmException e) {
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+				} catch (CertificateException e) {
+					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+				} catch (CredentialException e) {
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 				}
 				

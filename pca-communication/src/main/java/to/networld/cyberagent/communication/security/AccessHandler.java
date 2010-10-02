@@ -19,7 +19,7 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.cyberagent.security;
+package to.networld.cyberagent.communication.security;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;

@@ -30,8 +30,9 @@ import javax.xml.soap.SOAPMessage;
 
 
 import to.networld.cyberagent.common.log.Logging;
+import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
 import to.networld.cyberagent.common.queues.QueueHandler;
-import to.networld.cyberagent.common.queues.SecurityQueueHandler;
+import to.networld.cyberagent.common.queues.ReasoningQueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
 
 /**
@@ -42,7 +43,7 @@ import to.networld.cyberagent.reasoning.common.ComponentConfig;
 public class SOAPHandler extends Thread{
 	private static SOAPHandler instance = null;
 	private final QueueHandler<SOAPMessage> inputQueue;
-//	private final QueueHandler<SOAPMessage> outputQueue = null;
+	private final QueueHandler<SOAPMessage> outputQueue;
 	private boolean running = true;
 	
 	public static SOAPHandler newInstance() {
@@ -52,8 +53,8 @@ public class SOAPHandler extends Thread{
 	
 	public SOAPHandler() {
 		this.setName("Reasoner");
-		this.inputQueue = SecurityQueueHandler.newInstance();
-//		this.outputQueue = ReasoningQueueHandler.newInstance();
+		this.inputQueue = CommunicationRequestQueueHandler.newInstance();
+		this.outputQueue = ReasoningQueueHandler.newInstance();
 	}
 	
 	@Override
@@ -71,6 +72,8 @@ public class SOAPHandler extends Thread{
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
 				message.writeTo(os);
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug(os.toString().replace("\n", "\\n") + "'");
+				
+				this.outputQueue.addLast(message);
 			} catch (InterruptedException e) {
 				if ( this.running == false )
 					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Interrupting reading from queue...");

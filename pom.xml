@@ -67,7 +67,6 @@
         <modules>
                 <module>pca-common</module>
                 <module>pca-core</module>
-                <module>pca-security</module>
                 <module>pca-communication</module>
                 <module>pca-reasoning</module>
         </modules>
@@ -97,11 +96,6 @@
                         <dependency>
                                 <groupId>to.networld.cyberagent</groupId>
                                 <artifactId>pca-core</artifactId>
-                                <version>0.1-SNAPSHOT</version>
-                        </dependency>
-                        <dependency>
-                                <groupId>to.networld.cyberagent</groupId>
-                                <artifactId>pca-security</artifactId>
                                 <version>0.1-SNAPSHOT</version>
                         </dependency>
                 </dependencies>

@@ -19,7 +19,7 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.cyberagent.security;
+package to.networld.cyberagent.communication.security;
 
 import java.io.IOException;
 import java.security.KeyStoreException;
@@ -37,22 +37,30 @@ import to.networld.soap.security.interfaces.ISecSOAPMessage;
  * @author Alex Oberhauser
  * @author Corneliu Valentin Stanciu
  */
-public class SecSOAPMessageHandler {
-	private static SecSOAPMessageHandler instance;
+public class SecurityHandler {
+	private static SecurityHandler instance;
 	private final CredentialHandler credentialHandler;
 	
-	private SecSOAPMessageHandler() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	private SecurityHandler() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		this.credentialHandler = CredentialHandler.newInstance();
 	}
 	
-	public static SecSOAPMessageHandler newInstance() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		if ( instance == null ) instance = new SecSOAPMessageHandler();
+	public static SecurityHandler newInstance() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		if ( instance == null ) instance = new SecurityHandler();
 		return instance;
 	}
 	
+	/**
+	 * Checks the security constraints and decrypts the message.
+	 * 
+	 * @param _secMessage The secure message received over the wire.
+	 * @return The clear text and checked SOAP message.
+	 * @throws SOAPException
+	 * @throws CredentialException
+	 * @throws IOException
+	 */
 	public SOAPMessage getSOAPMessage(ISecSOAPMessage _secMessage) throws SOAPException, CredentialException, IOException {
 		_secMessage.checkSecurityConstraints(this.credentialHandler.getCredential());
 		return _secMessage.getSOAPMessage();
 	}
-	
 }
