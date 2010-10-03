@@ -111,10 +111,10 @@ public class SecurityHandler {
 		}
 		
 		/*
-		 *  XXX, TODO: In productive use "socket.setNeedClientAuth(true);", active this line to assure that ALL clients have to authenticate.
+		 *  TODO: In productive use "socket.setNeedClientAuth(true);", active this line to assure that ALL clients have to authenticate.
 		 */
-		socket.setNeedClientAuth(true);
-//		socket.setWantClientAuth(true);
+//		socket.setNeedClientAuth(true);
+		socket.setWantClientAuth(true);
 		
 		return socket;
 	}

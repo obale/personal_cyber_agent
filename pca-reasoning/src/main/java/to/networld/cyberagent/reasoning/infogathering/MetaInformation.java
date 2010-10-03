@@ -60,6 +60,12 @@ public class MetaInformation {
 		this.header = _header;
 	}
 	
+	/**
+	 * Converts a Node object to the String representation.
+	 * 
+	 * @param node A XML node gained from a SOAP message
+	 * @return The representation of the given node and all sub nodes as String.
+	 */
 	private static String nodeToString(Node node) {
 		StringWriter sw = new StringWriter();
 		try {
@@ -73,6 +79,12 @@ public class MetaInformation {
 		return sw.toString();
 	}
 	
+	/**
+	 * Stores the information related to a foaf:Agent subject (gained from the
+	 * SOAP header) to the RDF repository.
+	 * 
+	 * @throws IOException
+	 */
 	public synchronized void store() throws IOException {
 		RepositoryHandler reposHandler = new RepositoryHandler();
 		try {

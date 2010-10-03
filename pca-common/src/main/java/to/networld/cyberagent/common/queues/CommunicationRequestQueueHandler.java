@@ -31,8 +31,9 @@ import to.networld.cyberagent.common.data.IPPackage;
  *
  */
 public class CommunicationRequestQueueHandler extends QueueHandler<SOAPMessage> {
-
 	private static QueueHandler<IPPackage> instance = null;
+	
+	private CommunicationRequestQueueHandler() {}
 
 	public static QueueHandler<IPPackage> newInstance() {
 		if ( instance == null ) instance = new QueueHandler<IPPackage>(); 

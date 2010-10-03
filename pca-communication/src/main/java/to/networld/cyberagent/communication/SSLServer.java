@@ -83,6 +83,8 @@ public class SSLServer extends Thread {
 		Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Listening on https://" + this.config.getProperty("ssl.host") + ":"
 				+ this.config.getProperty("ssl.port") + "...");
 		
+		Responder.newInstance().start();
+		
 		while ( this.running ) {
 			try {
 				SSLSocket socket = (SSLSocket) this.sslServerSocket.accept();

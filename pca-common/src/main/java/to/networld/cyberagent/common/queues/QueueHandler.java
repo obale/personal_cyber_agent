@@ -32,7 +32,6 @@ import java.util.concurrent.LinkedBlockingDeque;
  * @param <T>
  */
 public class QueueHandler<T> {
-
 	protected LinkedBlockingDeque<T> queue = null;
 
 	protected QueueHandler() {

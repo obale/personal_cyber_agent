@@ -19,7 +19,7 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.cyberagent.communication;
+package to.networld.cyberagent.communication.common;
 
 import java.util.HashMap;
 

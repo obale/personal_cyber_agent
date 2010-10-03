@@ -42,10 +42,12 @@ import to.networld.cyberagent.reasoning.infogathering.MetaInformation;
  * @author Alex Oberhauser
  */
 public class SOAPHandler extends Thread {
-	private SOAPMessage message; 
+	private SOAPMessage message = null;
+	private IPPackage ipp = null;
 	
-	public SOAPHandler(SOAPMessage _message) {
-		this.message = _message;
+	public SOAPHandler(IPPackage _ipp) {
+		this.ipp = _ipp;
+		this.message = _ipp.getSOAPMessage();
 	}
 	
 	@Override
@@ -61,7 +63,7 @@ public class SOAPHandler extends Thread {
 			this.message.writeTo(os);
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug(os.toString().replace("\n", "\\n") + "'");
 				
-			ReasoningQueueHandler.newInstance().addLast(new IPPackage(this.message));
+			ReasoningQueueHandler.newInstance().addLast(this.ipp);
 		} catch (IOException e) {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (SOAPException e) {

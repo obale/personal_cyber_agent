@@ -30,9 +30,10 @@ import to.networld.cyberagent.common.data.IPPackage;
  *
  */
 public class ReasoningQueueHandler extends QueueHandler<IPPackage> {
-
 	private static QueueHandler<IPPackage> instance = null;
 
+	private ReasoningQueueHandler() {}
+	
 	public synchronized static QueueHandler<IPPackage> newInstance() {
 		if ( instance == null ) instance = new QueueHandler<IPPackage>(); 
 		return instance;

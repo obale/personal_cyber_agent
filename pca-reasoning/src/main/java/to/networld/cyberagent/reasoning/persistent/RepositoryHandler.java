@@ -53,7 +53,7 @@ import to.networld.cyberagent.reasoning.common.ComponentConfig;
 
 /**
  * Repository Handler that uses the Sesame RDF Repository. If the connection with a
- * remote repository fails the fallback solution is to use a locale data store.
+ * remote repository fails the fallback solution is to use a local data store.
  * 
  * @author Alex Oberhauser
  * @author Corneliu Stanciu Valentin
@@ -72,15 +72,17 @@ public class RepositoryHandler {
 		try {
 			RemoteRepositoryManager remRepManager = RemoteRepositoryManager.getInstance(remoteRepos);
 			this.repos = remRepManager.getRepository(remoteDB);
+			remRepManager.shutDown();
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Connected to the remote repository '" + remoteRepos + "' with database '" + remoteDB + "'");
 		} catch (Exception e) {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).warn("[!!!] Failed to connect to the remote repository '" + remoteRepos + "' with database '" + remoteDB + "'!");
 			String dataDir = prop.getProperty("pca.persistent.datadir");
+			Logging.getLogger(ComponentConfig.COMPONENT_NAME).warn("[!!!] Using instead the local repository '" + dataDir + "'");
 			this.repos = new SailRepository(new MemoryStore(new File(dataDir)));
 		}
 	}
 	
-	public void init() throws RepositoryException {
+	public synchronized void init() throws RepositoryException {
 		this.repos.initialize();
 		this.valueFactory = this.repos.getValueFactory();
 		this.connection = this.repos.getConnection();
@@ -112,9 +114,8 @@ public class RepositoryHandler {
 		return this.valueFactory;
 	}
 	
-	public void clean() throws RepositoryException {
+	public synchronized void clean() throws RepositoryException {
 		if ( this.connection != null ) {
-			this.connection.commit();
 			this.connection.close();
 		}
 		if ( this.repos != null )

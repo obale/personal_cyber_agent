@@ -30,7 +30,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.UUID;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -43,8 +42,9 @@ import org.apache.ws.security.components.crypto.CredentialException;
 import to.networld.cyberagent.common.data.IPPackage;
 import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
-import to.networld.cyberagent.communication.common.ActionURIHandler;
 import to.networld.cyberagent.communication.common.ComponentConfig;
+import to.networld.cyberagent.communication.common.CommunicationHelper;
+import to.networld.cyberagent.communication.common.HTTPHeader;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
 import to.networld.cyberagent.communication.security.SecurityHandler;
 import to.networld.soap.security.interfaces.ISecSOAPMessage;
@@ -68,30 +68,6 @@ public class ConnectionHandler extends Thread {
 		this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 		this.writer = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
 		this.clientID = this.socket.getInetAddress().getHostAddress() + ":" + this.socket.getPort();
-	}
-	
-	private void sendSOAPStatus(String _conversationID, String _status) throws IOException {
-		try {
-			String soapMessage = SOAPBuilder.createStatusMessage(_conversationID, _status);
-			this.sendLine("HTTP/1.1 200 OK");
-			this.sendLine("Content-Type: application/soap+xml; charset=utf-8");
-			this.sendLine("Content-Length: " + soapMessage.length());
-			this.sendLine("SOAPAction: \"" + ActionURIHandler.STATUS_ACTION + "\"");
-			this.sendLine("");
-			this.sendLine(soapMessage);
-		} catch (SOAPException e) {
-			this.sendLine("HTTP/1.1 200 OK");
-			this.sendLine("Content-Type: text/plain; charset=utf-8");
-			this.sendLine("");
-			this.sendLine(_status);
-		}
-		
-	}
-	
-	private void sendLine(String _line) throws IOException {
-		this.writer.write(_line);
-		this.writer.newLine();
-		this.writer.flush();
 	}
 	
 	/**
@@ -163,14 +139,15 @@ public class ConnectionHandler extends Thread {
 				
 				/*
 				 * Send OK to the client.
+				 * XXX: Is only for testing purpose. The response should be handled by a own component. 
 				 */
-				this.sendSOAPStatus(UUID.randomUUID().toString(), "OK");
+//				CommunicationHelper.sendSOAPStatus(this.writer, UUID.randomUUID().toString(), "OK");
 			} else {
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("[" + this.clientID + "] Unknown request with User-Agent '" + header.getUserAgent() + "'");
-				this.sendLine("HTTP/1.1 412 Precondition Failed");
-				this.sendLine("Content-Type: text/plain; charset=utf-8");
-				this.sendLine("");
-				this.sendLine("Are you sure that you know what you are doing?");
+				CommunicationHelper.sendLine(this.writer, "HTTP/1.1 412 Precondition Failed");
+				CommunicationHelper.sendLine(this.writer, "Content-Type: text/plain; charset=utf-8");
+				CommunicationHelper.sendLine(this.writer, "");
+				CommunicationHelper.sendLine(this.writer, "Are you sure that you know what you are doing?");
 			}
 		} catch (IOException e) {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
@@ -178,23 +155,23 @@ public class ConnectionHandler extends Thread {
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
 		} catch (NumberFormatException e) {
 			try {
-				this.sendLine("HTTP/1.1 411 Length Required");
-				this.sendLine("");
+				CommunicationHelper.sendLine(this.writer, "HTTP/1.1 411 Length Required");
+				CommunicationHelper.sendLine(this.writer, "");
 			} catch (IOException e1) {
 				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e1.getLocalizedMessage());
 			}
 			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("[" + this.clientID + "] NumberFormatException : " + e.getLocalizedMessage());
-		} finally {
-			try {
-				if ( reader != null )
-					this.reader.close();
-				if ( writer != null )
-					this.writer.close();
-				this.socket.close();
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + clientID + "] Connection closed!");
-			} catch (IOException e) {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + clientID + "] " + e.getLocalizedMessage());
-			}
+//		} finally {
+//			try {
+//				if ( reader != null )
+//					this.reader.close();
+//				if ( writer != null )
+//					this.writer.close();
+//				this.socket.close();
+//				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + clientID + "] Connection closed!");
+//			} catch (IOException e) {
+//				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + clientID + "] " + e.getLocalizedMessage());
+//			}
 		}
 	}
 }
