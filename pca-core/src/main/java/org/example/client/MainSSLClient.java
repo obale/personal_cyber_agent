@@ -56,6 +56,7 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.components.crypto.CredentialException;
 
+import to.networld.cyberagent.common.config.Configuration;
 import to.networld.cyberagent.communication.SSLServer;
 import to.networld.cyberagent.communication.common.ActionURIHandler;
 import to.networld.cyberagent.communication.common.OntologyHandler;
@@ -146,14 +147,14 @@ public class MainSSLClient {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		Properties config = new Properties();
-		config.load(SSLServer.class.getResourceAsStream("default.properties"));
+		Configuration config = Configuration.newInstance();
 
-		URL trustedURL = SSLServer.class.getResource(config.getProperty("keystore.trusted"));
+		URL trustedURL = SSLServer.class.getResource(config.getValue("communication.keystore.trusted"));
 		System.setProperty("javax.net.ssl.trustStore", trustedURL.getPath());
 
 		SSLSocketFactory factory = MainSSLClient.getFactory(MainSSLClient.class.getResourceAsStream("keys/johndoe.p12"), "johndoe");
-		SSLSocket socket = (SSLSocket) factory.createSocket(config.getProperty("ssl.host"), new Integer(config.getProperty("ssl.port")));
+		SSLSocket socket = (SSLSocket) factory.createSocket(config.getValue("communication.ssl.host"), 
+				new Integer(config.getValue("communication.ssl.port")));
 
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));

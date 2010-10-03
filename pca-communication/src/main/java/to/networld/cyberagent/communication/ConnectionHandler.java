@@ -26,9 +26,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -37,10 +35,10 @@ import javax.net.ssl.SSLSocket;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.log4j.Logger;
 import org.apache.ws.security.components.crypto.CredentialException;
 
 import to.networld.cyberagent.common.data.IPPackage;
-import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
 import to.networld.cyberagent.communication.common.ComponentConfig;
 import to.networld.cyberagent.communication.common.CommunicationHelper;
@@ -90,15 +88,15 @@ public class ConnectionHandler extends Thread {
 
 	@Override
 	public void run() {
-		Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Connection established!");
+		Logger.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Connection established!");
 		try {
 			SSLSession session = this.socket.getSession();
 			try {
 				X509Certificate clientCert = (X509Certificate) session.getPeerCertificates()[0];
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Session started for user '" + 
+				Logger.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Session started for user '" + 
 						clientCert.getSubjectDN() + "'");
 			} catch (SSLPeerUnverifiedException e) {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] Authentication failed!");
+				Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] Authentication failed!");
 			}
 			
 			String hline = null;
@@ -113,7 +111,7 @@ public class ConnectionHandler extends Thread {
 
 				StringBuffer request = this.readRequest(size);
 				
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Message of type '" + 
+				Logger.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + this.clientID + "] Message of type '" + 
 						header.getContentType() +  "' received from client '" + 
 						header.getUserAgent() + "': '" + request.toString().replace("\n", "\\n") + "'");
 				
@@ -126,52 +124,31 @@ public class ConnectionHandler extends Thread {
 					ipp.setSSLSocket(this.socket, session);
 					CommunicationRequestQueueHandler.newInstance().addLast(ipp);
 				} catch (SOAPException e) {
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
-				} catch (KeyStoreException e) {
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-				} catch (NoSuchAlgorithmException e) {
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-				} catch (CertificateException e) {
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
+					Logger.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
 				} catch (CredentialException e) {
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
+					Logger.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
+				} catch (GeneralSecurityException e) {
+					Logger.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
 				}
-				
-				/*
-				 * Send OK to the client.
-				 * XXX: Is only for testing purpose. The response should be handled by a own component. 
-				 */
-//				CommunicationHelper.sendSOAPStatus(this.writer, UUID.randomUUID().toString(), "OK");
 			} else {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("[" + this.clientID + "] Unknown request with User-Agent '" + header.getUserAgent() + "'");
+				Logger.getLogger(ComponentConfig.COMPONENT_NAME).info("[" + this.clientID + "] Unknown request with User-Agent '" + header.getUserAgent() + "'");
 				CommunicationHelper.sendLine(this.writer, "HTTP/1.1 412 Precondition Failed");
 				CommunicationHelper.sendLine(this.writer, "Content-Type: text/plain; charset=utf-8");
 				CommunicationHelper.sendLine(this.writer, "");
 				CommunicationHelper.sendLine(this.writer, "Are you sure that you know what you are doing?");
 			}
 		} catch (IOException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
 		} catch (NullPointerException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
 		} catch (NumberFormatException e) {
 			try {
 				CommunicationHelper.sendLine(this.writer, "HTTP/1.1 411 Length Required");
 				CommunicationHelper.sendLine(this.writer, "");
 			} catch (IOException e1) {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e1.getLocalizedMessage());
+				Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e1.getLocalizedMessage());
 			}
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("[" + this.clientID + "] NumberFormatException : " + e.getLocalizedMessage());
-//		} finally {
-//			try {
-//				if ( reader != null )
-//					this.reader.close();
-//				if ( writer != null )
-//					this.writer.close();
-//				this.socket.close();
-//				Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + clientID + "] Connection closed!");
-//			} catch (IOException e) {
-//				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + clientID + "] " + e.getLocalizedMessage());
-//			}
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).info("[" + this.clientID + "] NumberFormatException : " + e.getLocalizedMessage());
 		}
 	}
 }

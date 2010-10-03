@@ -28,8 +28,9 @@ import java.util.UUID;
 
 import javax.net.ssl.SSLSocket;
 
+import org.apache.log4j.Logger;
+
 import to.networld.cyberagent.common.data.IPPackage;
-import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.communication.common.ComponentConfig;
 import to.networld.cyberagent.communication.common.CommunicationHelper;
 
@@ -60,17 +61,17 @@ public class ResponseHandler extends Thread {
 			 */
 			CommunicationHelper.sendSOAPStatus(out, UUID.randomUUID().toString(), "Message stored successfully!");
 		} catch (IOException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} finally {
 			try {
 				if ( out != null )
 					out.close();
 				if ( socket != null ) {
 					socket.close();
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + CommunicationHelper.getClientID(socket) + "] Connection closed!");
+					Logger.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + CommunicationHelper.getClientID(socket) + "] Connection closed!");
 				}
 			} catch (IOException e) {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+				Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 			}
 		}
 	}

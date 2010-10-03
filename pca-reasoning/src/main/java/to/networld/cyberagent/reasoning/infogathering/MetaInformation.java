@@ -38,11 +38,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.log4j.Logger;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 
-import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
 import to.networld.cyberagent.reasoning.persistent.RepositoryHandler;
 import to.networld.scrawler.common.Ontologies;
@@ -73,7 +73,7 @@ public class MetaInformation {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 			transformer.transform(new DOMSource(node), new StreamResult(sw));
 		} catch (TransformerException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).warn("Not able to transform SOAPElement to String.");
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).warn("Not able to transform SOAPElement to String.");
 			return "";
 		}
 		return sw.toString();
@@ -103,14 +103,14 @@ public class MetaInformation {
 				reposHandler.addRDFStream(is, foafURLStr, RDFFormat.RDFXML);
 			}
 		} catch (RDFParseException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (RepositoryException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} finally {	
 			try {
 				reposHandler.clean();
 			} catch (RepositoryException e) {
-				Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+				Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 			}
 		}
 	}

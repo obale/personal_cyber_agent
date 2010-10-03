@@ -23,14 +23,9 @@ package to.networld.cyberagent.communication.security;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.security.KeyManagementException;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Properties;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -40,9 +35,10 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.log4j.Logger;
 import org.apache.ws.security.components.crypto.CredentialException;
 
-import to.networld.cyberagent.common.log.Logging;
+import to.networld.cyberagent.common.config.Configuration;
 import to.networld.cyberagent.communication.SSLServer;
 import to.networld.cyberagent.communication.common.ComponentConfig;
 import to.networld.soap.security.interfaces.ISecSOAPMessage;
@@ -56,16 +52,15 @@ import to.networld.soap.security.interfaces.ISecSOAPMessage;
  */
 public class SecurityHandler {
 	private static SecurityHandler instance;
-	private Properties config = null;
+	private Configuration config = null;
 	private final CredentialHandler credentialHandler;
 	
-	private SecurityHandler() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	private SecurityHandler() throws IOException, GeneralSecurityException {
 		this.credentialHandler = CredentialHandler.newInstance();
-		this.config = new Properties();
-		this.config.load(SSLServer.class.getResourceAsStream("default.properties"));
+		this.config = Configuration.newInstance();
 	}
 	
-	public static SecurityHandler newInstance() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public static SecurityHandler newInstance() throws IOException, GeneralSecurityException {
 		if ( instance == null ) instance = new SecurityHandler();
 		return instance;
 	}
@@ -74,24 +69,20 @@ public class SecurityHandler {
 	 * Creates a server side SSL socket.
 	 * 
 	 * @return The SSLServerSocket that are listening to the port specified in the configuration file.
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyStoreException
-	 * @throws CertificateException
 	 * @throws IOException
-	 * @throws UnrecoverableKeyException
-	 * @throws KeyManagementException
+	 * @throws GeneralSecurityException 
 	 */
-	public SSLServerSocket createSSLServerSocket() throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
-		SSLContext sslContext = SSLContext.getInstance(this.config.getProperty("ssl.type"));
+	public SSLServerSocket createSSLServerSocket() throws IOException, GeneralSecurityException {
+		SSLContext sslContext = SSLContext.getInstance(this.config.getValue("communication.ssl.type"));
 
-		KeyStore keystore = KeyStore.getInstance(this.config.getProperty("keystore.type"));
-		keystore.load(SSLServer.class.getResourceAsStream(this.config.getProperty("keystore.file")), 
-				this.config.getProperty("keystore.password").toCharArray());
+		KeyStore keystore = KeyStore.getInstance(this.config.getValue("communication.keystore.type"));
+		keystore.load(SSLServer.class.getResourceAsStream(this.config.getValue("communication.keystore.file")), 
+				this.config.getPassword("communication.keystore.password").toCharArray());
 		
-		KeyManagerFactory keyManFactory = KeyManagerFactory.getInstance(config.getProperty("keymanager.type"));
-		keyManFactory.init(keystore, this.config.getProperty("keymanager.password").toCharArray());
+		KeyManagerFactory keyManFactory = KeyManagerFactory.getInstance(config.getValue("communication.keymanager.type"));
+		keyManFactory.init(keystore, this.config.getPassword("communication.keymanager.password").toCharArray());
 		
-		TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+		TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(this.config.getValue("communication.keymanager.type"));
 		CredentialHandler credential = CredentialHandler.newInstance();
 		trustManagerFactory.init(credential.getPublicKeyStore());
 		
@@ -99,15 +90,15 @@ public class SecurityHandler {
 		
 		SSLServerSocketFactory sslFactory = sslContext.getServerSocketFactory();
 		
-		SSLServerSocket socket = (SSLServerSocket) sslFactory.createServerSocket(new Integer(this.config.getProperty("ssl.port")), 
+		SSLServerSocket socket = (SSLServerSocket) sslFactory.createServerSocket(new Integer(this.config.getValue("communication.ssl.port")), 
 				10, 
-				InetAddress.getByName(this.config.getProperty("ssl.host")));
+				InetAddress.getByName(this.config.getValue("communication.ssl.host")));
 
 		try {
-			X509Certificate cert = (X509Certificate) keystore.getCertificate(this.config.getProperty("certificate.alias"));
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Used X.509 certificate: " + cert.getIssuerDN());
+			X509Certificate cert = (X509Certificate) keystore.getCertificate(this.config.getValue("communication.certificate.alias"));
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).info("Used X.509 certificate: " + cert.getIssuerDN());
 		} catch (NullPointerException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("Information for SSL certificate not found!");
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("Information for SSL certificate not found!");
 		}
 		
 		/*

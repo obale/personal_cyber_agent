@@ -22,19 +22,17 @@
 package to.networld.cyberagent.communication;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
-import to.networld.cyberagent.common.log.Logging;
+import org.apache.log4j.Logger;
+
+import to.networld.cyberagent.common.config.Configuration;
 import to.networld.cyberagent.communication.common.ComponentConfig;
 import to.networld.cyberagent.communication.security.SecurityHandler;
 
@@ -47,18 +45,19 @@ import to.networld.cyberagent.communication.security.SecurityHandler;
 public class SSLServer extends Thread {
 	private static SSLServer instance = null;
 	private final SecurityHandler secHandler;
+	private final Responder responder;
 	private SSLServerSocket sslServerSocket = null;
-	private Properties config = null;
+	private Configuration config = null;
 	private boolean running = true;
 	
-	private SSLServer() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+	private SSLServer() throws IOException, GeneralSecurityException {
 		this.setName("SSLServer");
 		this.secHandler = SecurityHandler.newInstance();
-		this.config = new Properties();
-		this.config.load(SSLServer.class.getResourceAsStream("default.properties"));
+		this.responder = Responder.newInstance();
+		this.config = Configuration.newInstance();
 	}
 	
-	public static SSLServer newInstance() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+	public static SSLServer newInstance() throws IOException, GeneralSecurityException {
 		if ( instance == null )	instance = new SSLServer();
 		return instance; 
 	}
@@ -66,24 +65,19 @@ public class SSLServer extends Thread {
 	/**
 	 * Start the server that are listen to a SSL socket. 
 	 * 
-	 * @throws NoSuchAlgorithmException
 	 * @throws IOException
-	 * @throws KeyStoreException
-	 * @throws CertificateException
-	 * @throws KeyManagementException
-	 * @throws UnrecoverableKeyException
 	 * @throws InterruptedException 
+	 * @throws GeneralSecurityException 
 	 */
-	public void startServer() throws NoSuchAlgorithmException, IOException, KeyStoreException, CertificateException, KeyManagementException, UnrecoverableKeyException, InterruptedException {
+	public void startServer() throws IOException, InterruptedException, GeneralSecurityException {
 		this.running = true;
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 		
 		this.sslServerSocket = this.secHandler.createSSLServerSocket();		
+		this.responder.start();
 		
-		Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Listening on https://" + this.config.getProperty("ssl.host") + ":"
-				+ this.config.getProperty("ssl.port") + "...");
-		
-		Responder.newInstance().start();
+		Logger.getLogger(ComponentConfig.COMPONENT_NAME).info("Listening on https://" + this.config.getValue("communication.ssl.host") + ":"
+				+ this.config.getValue("communication.ssl.port") + "...");
 		
 		while ( this.running ) {
 			try {
@@ -91,7 +85,7 @@ public class SSLServer extends Thread {
 				threadPool.execute(new ConnectionHandler(socket));
 			} catch (IOException e) {
 				if ( this.running == false)
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Closing SSL server socket...");
+					Logger.getLogger(ComponentConfig.COMPONENT_NAME).info("Closing SSL server socket...");
 				else 
 					throw new IOException();
 			}
@@ -103,8 +97,10 @@ public class SSLServer extends Thread {
 	 * Stops the currently running server.
 	 * 
 	 * @throws IOException 
+	 * @throws InterruptedException 
 	 */
-	public void stopServer() throws IOException {
+	public void stopServer() throws IOException, InterruptedException {
+		this.responder.stopResponder();
 		this.sslServerSocket.close();
 		this.running = false;
 	}
@@ -116,20 +112,14 @@ public class SSLServer extends Thread {
 	public void run() {
 		try {
 			this.startServer();
-		} catch (KeyManagementException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-		} catch (UnrecoverableKeyException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (NoSuchAlgorithmException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-		} catch (KeyStoreException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-		} catch (CertificateException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (IOException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (InterruptedException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+		} catch (GeneralSecurityException e) {
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		}
 	}
 }

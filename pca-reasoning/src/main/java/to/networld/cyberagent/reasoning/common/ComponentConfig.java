@@ -26,5 +26,5 @@ package to.networld.cyberagent.reasoning.common;
  * @author Corneliu Valentin Stanciu
  */
 public interface ComponentConfig {
-	public static final String COMPONENT_NAME = "reasoning";
+	public static final String COMPONENT_NAME = "to.networld.cyberagent.reasoning";
 }

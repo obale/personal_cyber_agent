@@ -28,8 +28,9 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.log4j.Logger;
+
 import to.networld.cyberagent.common.data.IPPackage;
-import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.ReasoningQueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
 import to.networld.cyberagent.reasoning.infogathering.MetaInformation;
@@ -53,7 +54,6 @@ public class SOAPHandler extends Thread {
 	@Override
 	public void run() {
 //		new AttachmentHandler(this.message).printInformation();
-
 		try {
 			SOAPHeader header = this.message.getSOAPHeader();
 			MetaInformation meta = new MetaInformation(header);
@@ -61,14 +61,13 @@ public class SOAPHandler extends Thread {
 
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			this.message.writeTo(os);
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).debug(os.toString().replace("\n", "\\n") + "'");
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).debug(os.toString().replace("\n", "\\n") + "'");
 				
 			ReasoningQueueHandler.newInstance().addLast(this.ipp);
 		} catch (IOException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} catch (SOAPException e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-		}
-				
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+		}		
 	}
 }

@@ -27,5 +27,5 @@ package to.networld.cyberagent.common;
  * 
  */
 public interface ComponentConfig {
-	public static final String COMPONENT_NAME = "core";
+	public static final String COMPONENT_NAME = "to.networld.cyberagent.core";
 }

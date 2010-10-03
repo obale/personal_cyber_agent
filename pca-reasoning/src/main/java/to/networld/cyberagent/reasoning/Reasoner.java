@@ -25,8 +25,9 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
+
 import to.networld.cyberagent.common.data.IPPackage;
-import to.networld.cyberagent.common.log.Logging;
 import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
 import to.networld.cyberagent.common.queues.QueueHandler;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
@@ -55,16 +56,16 @@ public class Reasoner extends Thread {
 	@Override
 	public void run() {
 		ExecutorService threadPool = Executors.newCachedThreadPool();
-		Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Reasoner started...");
+		Logger.getLogger(ComponentConfig.COMPONENT_NAME).info("Reasoner started...");
 		while ( this.running ) {
 			try {
 				IPPackage message = this.inputQueue.takeFirst();
 				threadPool.execute(new SOAPHandler(message));
 			} catch (InterruptedException e) {
 				if ( this.running == false )
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Interrupting reading from queue...");
+					Logger.getLogger(ComponentConfig.COMPONENT_NAME).info("Interrupting reading from queue...");
 				else
-					Logging.getLogger(ComponentConfig.COMPONENT_NAME).error("Reading from queue was interrupted!");
+					Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("Reading from queue was interrupted!");
 			}
 		}
 		threadPool.shutdown();

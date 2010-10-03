@@ -24,10 +24,10 @@ package to.networld.cyberagent.reasoning.persistent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import org.apache.log4j.Logger;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -48,7 +48,7 @@ import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
 
-import to.networld.cyberagent.common.log.Logging;
+import to.networld.cyberagent.common.config.Configuration;
 import to.networld.cyberagent.reasoning.common.ComponentConfig;
 
 /**
@@ -65,19 +65,18 @@ public class RepositoryHandler {
 	private RepositoryConnection connection;
 	
 	public RepositoryHandler() throws IOException {
-		Properties prop = new Properties();
-		prop.load(RepositoryHandler.class.getClassLoader().getResourceAsStream("to/networld/cyberagent/reasoning/default.properties"));
-		String remoteRepos = prop.getProperty("pca.persistent.remoteurl");
-		String remoteDB = prop.getProperty("pca.persistent.remotedb");
+		Configuration config = Configuration.newInstance();
+		String remoteRepos = config.getValue("reasoning.persistent.remoteurl");
+		String remoteDB = config.getValue("reasoning.persistent.remotedb");
 		try {
 			RemoteRepositoryManager remRepManager = RemoteRepositoryManager.getInstance(remoteRepos);
 			this.repos = remRepManager.getRepository(remoteDB);
 			remRepManager.shutDown();
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).info("Connected to the remote repository '" + remoteRepos + "' with database '" + remoteDB + "'");
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).info("Connected to the remote repository '" + remoteRepos + "' with database '" + remoteDB + "'");
 		} catch (Exception e) {
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).warn("[!!!] Failed to connect to the remote repository '" + remoteRepos + "' with database '" + remoteDB + "'!");
-			String dataDir = prop.getProperty("pca.persistent.datadir");
-			Logging.getLogger(ComponentConfig.COMPONENT_NAME).warn("[!!!] Using instead the local repository '" + dataDir + "'");
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).warn("[!!!] Failed to connect to the remote repository '" + remoteRepos + "' with database '" + remoteDB + "'!");
+			String dataDir = config.getValue("reasoning.persistent.datadir");
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).warn("[!!!] Using instead the local repository '" + dataDir + "'");
 			this.repos = new SailRepository(new MemoryStore(new File(dataDir)));
 		}
 	}

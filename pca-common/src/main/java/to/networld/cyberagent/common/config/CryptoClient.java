@@ -1,9 +1,9 @@
 /**
- * PCA Communication
+ * pca-common - to.networld.cyberagent.common.config
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
  * Written by Alex Oberhauser <alexoberhauser@networld.to>
+ * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,29 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.cyberagent.communication.common;
+package to.networld.cyberagent.common.config;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 /**
  * @author Alex Oberhauser
- * @author Corneliu Valentin Stanciu
- * 
  */
-public interface ComponentConfig {
-	public static final String COMPONENT_NAME = "to.networld.cyberagent.communication";
+public class CryptoClient {
+	
+	/**
+	 * @param args
+	 * @throws IOException 
+	 * @throws GeneralSecurityException 
+	 */
+	public static void main(String[] args) throws Exception {
+		String encPwd;
+		try {
+			encPwd = CryptoUtils.encrypt("rootca");
+			System.out.println(encPwd);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

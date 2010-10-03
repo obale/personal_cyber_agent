@@ -22,13 +22,12 @@
 package to.networld.cyberagent.communication.security;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.cert.CertificateException;
-import java.util.Properties;
 
+import to.networld.cyberagent.common.config.Configuration;
 import to.networld.soap.security.common.Credential;
 import to.networld.soap.security.interfaces.ICredential;
 
@@ -42,27 +41,26 @@ import to.networld.soap.security.interfaces.ICredential;
  */
 public class CredentialHandler {
 	private static CredentialHandler instance = null;
-	private final Properties config;
+	private final Configuration config;
 	private final ICredential credential;
 	
-	private CredentialHandler() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
-		this.config = new Properties();
-		this.config.load(CredentialHandler.class.getResourceAsStream("security.properties"));
+	private CredentialHandler() throws IOException, GeneralSecurityException {
+		this.config = Configuration.newInstance();
 		
-		this.credential = new Credential(CredentialHandler.class.getResource(this.config.getProperty("security.pkcs12file")).getFile(),
-				this.config.getProperty("security.pkcs12alias"),
-				this.config.getProperty("security.pkcs12password"),
-				CredentialHandler.class.getResource(this.config.getProperty("security.keystore")).getFile(),
-				this.config.getProperty("security.password"));
+		this.credential = new Credential(CredentialHandler.class.getResource(this.config.getValue("communication.security.pkcs12file")).getFile(),
+				this.config.getValue("communication.security.pkcs12alias"),
+				this.config.getPassword("communication.security.pkcs12password"),
+				CredentialHandler.class.getResource(this.config.getValue("communication.security.keystore")).getFile(),
+				this.config.getPassword("communication.security.password"));
 	}
 	
-	protected static CredentialHandler newInstance() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+	protected static CredentialHandler newInstance() throws IOException, GeneralSecurityException {
 		if ( instance == null ) instance = new CredentialHandler();
 		return instance;
 	}
 	
 	protected PublicKey getPublicRootCertificate() throws KeyStoreException { 
-		return this.credential.getPublicKeystore().getCertificate(this.config.getProperty("security.cacert")).getPublicKey();
+		return this.credential.getPublicKeystore().getCertificate(this.config.getValue("communication.security.cacert")).getPublicKey();
 	}
 	
 	protected KeyStore getPublicKeyStore() {
