@@ -63,16 +63,7 @@ public class ResponseHandler extends Thread {
 		} catch (IOException e) {
 			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		} finally {
-			try {
-				if ( out != null )
-					out.close();
-				if ( socket != null ) {
-					socket.close();
-					Logger.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + CommunicationHelper.getClientID(socket) + "] Connection closed!");
-				}
-			} catch (IOException e) {
-				Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
-			}
+			CommunicationHelper.closeConnection(socket, out);
 		}
 	}
 }

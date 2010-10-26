@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
 
 import to.networld.cyberagent.common.data.IPPackage;
-import to.networld.cyberagent.common.queues.ReasoningQueueHandler;
+import to.networld.cyberagent.common.queues.ResponseQueueHandler;
 import to.networld.cyberagent.common.queues.QueueHandler;
 import to.networld.cyberagent.communication.common.ComponentConfig;
 
@@ -50,7 +50,7 @@ public class Responder extends Thread {
 	
 	private Responder() {
 		this.setName("Responder");
-		this.inputQueue = ReasoningQueueHandler.newInstance();
+		this.inputQueue = ResponseQueueHandler.newInstance();
 	}
 	
 	@Override

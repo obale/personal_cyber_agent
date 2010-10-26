@@ -39,11 +39,12 @@ import org.apache.log4j.Logger;
 import org.apache.ws.security.components.crypto.CredentialException;
 
 import to.networld.cyberagent.common.data.IPPackage;
-import to.networld.cyberagent.common.queues.CommunicationRequestQueueHandler;
+import to.networld.cyberagent.common.queues.RequestQueueHandler;
 import to.networld.cyberagent.communication.common.ComponentConfig;
 import to.networld.cyberagent.communication.common.CommunicationHelper;
 import to.networld.cyberagent.communication.common.HTTPHeader;
 import to.networld.cyberagent.communication.common.SOAPBuilder;
+import to.networld.cyberagent.communication.security.ExpiredException;
 import to.networld.cyberagent.communication.security.SecurityHandler;
 import to.networld.soap.security.interfaces.ISecSOAPMessage;
 import to.networld.soap.security.security.SOAPSecMessageFactory;
@@ -122,13 +123,19 @@ public class ConnectionHandler extends Thread {
 					
 					IPPackage ipp = new IPPackage(soapRequest);
 					ipp.setSSLSocket(this.socket, session);
-					CommunicationRequestQueueHandler.newInstance().addLast(ipp);
+					RequestQueueHandler.newInstance().addLast(ipp);
 				} catch (SOAPException e) {
 					Logger.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
+					CommunicationHelper.closeConnection(this.socket, this.writer);
 				} catch (CredentialException e) {
 					Logger.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
+					CommunicationHelper.closeConnection(this.socket, this.writer);
 				} catch (GeneralSecurityException e) {
 					Logger.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
+					CommunicationHelper.closeConnection(this.socket, this.writer);
+				} catch (ExpiredException e) {
+					Logger.getLogger(ComponentConfig.COMPONENT_NAME).info(e.getLocalizedMessage());
+					CommunicationHelper.closeConnection(this.socket, this.writer);
 				}
 			} else {
 				Logger.getLogger(ComponentConfig.COMPONENT_NAME).info("[" + this.clientID + "] Unknown request with User-Agent '" + header.getUserAgent() + "'");
@@ -136,15 +143,19 @@ public class ConnectionHandler extends Thread {
 				CommunicationHelper.sendLine(this.writer, "Content-Type: text/plain; charset=utf-8");
 				CommunicationHelper.sendLine(this.writer, "");
 				CommunicationHelper.sendLine(this.writer, "Are you sure that you know what you are doing?");
+				CommunicationHelper.closeConnection(this.socket, this.writer);
 			}
 		} catch (IOException e) {
 			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
+			CommunicationHelper.closeConnection(this.socket, this.writer);
 		} catch (NullPointerException e) {
 			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e.getLocalizedMessage());
+			CommunicationHelper.closeConnection(this.socket, this.writer);
 		} catch (NumberFormatException e) {
 			try {
 				CommunicationHelper.sendLine(this.writer, "HTTP/1.1 411 Length Required");
 				CommunicationHelper.sendLine(this.writer, "");
+				CommunicationHelper.closeConnection(this.socket, this.writer);
 			} catch (IOException e1) {
 				Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("[" + this.clientID + "] " + e1.getLocalizedMessage());
 			}

@@ -27,6 +27,8 @@ import java.net.Socket;
 
 import javax.xml.soap.SOAPException;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Alex Oberhauser
  */
@@ -56,6 +58,19 @@ public abstract class CommunicationHelper {
 			sendLine(_writer, "Content-Type: text/plain; charset=utf-8");
 			sendLine(_writer, "");
 			sendLine(_writer, _status);
+		}
+	}
+	
+	public static void closeConnection(Socket _socket, BufferedWriter _writer) {
+		try {
+			if ( _writer != null )
+				_writer.close();
+			if ( _socket != null ) {
+				_socket.close();
+				Logger.getLogger(ComponentConfig.COMPONENT_NAME).debug("[" + CommunicationHelper.getClientID(_socket) + "] Connection closed!");
+			}
+		} catch (IOException e) {
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
 		}
 	}
 }

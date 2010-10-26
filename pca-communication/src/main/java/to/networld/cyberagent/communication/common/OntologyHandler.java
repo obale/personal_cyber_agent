@@ -38,6 +38,12 @@ public interface OntologyHandler {
 	 *************************************************
 	 */
 
+	public static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
+	public static final String WSSE_PREFIX = "wsse";
+	
+	public static final String WSU_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
+	public static final String WSU_PREFIX = "wsu";
+	
 	public static final String RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	public static final String RDF_PREFIX = "rdf";
 

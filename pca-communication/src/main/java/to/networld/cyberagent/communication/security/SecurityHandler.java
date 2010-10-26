@@ -26,21 +26,32 @@ import java.net.InetAddress;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.log4j.Logger;
 import org.apache.ws.security.components.crypto.CredentialException;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import to.networld.cyberagent.common.config.Configuration;
 import to.networld.cyberagent.communication.SSLServer;
 import to.networld.cyberagent.communication.common.ComponentConfig;
+import to.networld.cyberagent.communication.common.OntologyHandler;
 import to.networld.soap.security.interfaces.ISecSOAPMessage;
 
 /**
@@ -51,7 +62,7 @@ import to.networld.soap.security.interfaces.ISecSOAPMessage;
  * @author Corneliu Valentin Stanciu
  */
 public class SecurityHandler {
-	private static SecurityHandler instance;
+	private static SecurityHandler instance = null;
 	private Configuration config = null;
 	private final CredentialHandler credentialHandler;
 	
@@ -101,13 +112,53 @@ public class SecurityHandler {
 			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error("Information for SSL certificate not found!");
 		}
 		
-		/*
-		 *  TODO: In productive use "socket.setNeedClientAuth(true);", active this line to assure that ALL clients have to authenticate.
-		 */
-//		socket.setNeedClientAuth(true);
-		socket.setWantClientAuth(true);
+		boolean obligatory = Boolean.parseBoolean(this.config.getValue("communication.security.authentication"));
+		socket.setWantClientAuth(!obligatory);
+		socket.setNeedClientAuth(obligatory);
 		
 		return socket;
+	}
+	
+	private boolean _isExpired(String _expireDate) {
+		Calendar cal = Calendar.getInstance();
+		Date currentDate = cal.getTime();
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		
+		try {
+			Date expireDate = formatter.parse(_expireDate);
+			return !currentDate.before(expireDate);
+		} catch (ParseException e) {
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+		}
+		return true;
+	}
+	
+	private boolean isExpired(SOAPMessage _soapMessage) throws SOAPException {
+		SOAPHeader header = _soapMessage.getSOAPHeader();
+		
+		try {
+			Iterator<?> secHeaders = header.getChildElements(new QName(OntologyHandler.WSSE_NS, "Security"));
+			if ( secHeaders.hasNext() ) {
+				Node secNode = (Node)secHeaders.next();
+				NodeList secNodes = secNode.getChildNodes();
+				for ( int count0 = 0; count0 < secNodes.getLength(); count0++ ) {
+					Node tmpNode = secNodes.item(count0);
+					if ( tmpNode.getNamespaceURI().equalsIgnoreCase(OntologyHandler.WSU_NS) &&
+							tmpNode.getLocalName().equalsIgnoreCase("Timestamp") ) {
+						NodeList nodeList = tmpNode.getChildNodes();
+						for ( int count1 = 0; count1 < nodeList.getLength(); count1++ ) {
+							Node tmp2Node = nodeList.item(count1);
+							if ( tmp2Node.getNamespaceURI().equalsIgnoreCase(OntologyHandler.WSU_NS) &&
+									tmp2Node.getLocalName().equalsIgnoreCase("Expires") )
+								return _isExpired(tmp2Node.getTextContent());
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			Logger.getLogger(ComponentConfig.COMPONENT_NAME).error(e.getLocalizedMessage());
+		}
+		return true;
 	}
 	
 	/**
@@ -121,9 +172,13 @@ public class SecurityHandler {
 	 * @throws SOAPException
 	 * @throws CredentialException
 	 * @throws IOException
+	 * @throws ExpiredException 
 	 */
-	public SOAPMessage getSOAPMessage(ISecSOAPMessage _secMessage) throws SOAPException, CredentialException, IOException {
+	public SOAPMessage getSOAPMessage(ISecSOAPMessage _secMessage) throws SOAPException, CredentialException, IOException, ExpiredException {
 		_secMessage.checkSecurityConstraints(this.credentialHandler.getCredential());
-		return _secMessage.getSOAPMessage();
+		SOAPMessage soapMessage = _secMessage.getSOAPMessage();
+		if ( this.isExpired(soapMessage))
+			throw new ExpiredException("SOAP Message is expired!");
+		return soapMessage;
 	}
 }
