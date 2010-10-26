@@ -164,9 +164,6 @@ public class SecurityHandler {
 	/**
 	 * Checks the security constraints and decrypts the message.
 	 * 
-	 * TODO: Check the X.509 certificate, that was used as authorization in the communication layer, against
-	 *       the X.509 certificate that was used for the signing part.
-	 * 
 	 * @param _secMessage The secure message received over the wire.
 	 * @return The clear text and checked SOAP message.
 	 * @throws SOAPException
