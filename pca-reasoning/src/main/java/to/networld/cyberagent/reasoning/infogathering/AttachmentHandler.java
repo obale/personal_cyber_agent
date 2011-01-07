@@ -2,7 +2,7 @@
  * pca-reasoning - to.networld.cyberagent.reasoning
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <alexoberhauser@networld.to>
+ * Written by Alex Oberhauser <oberhauseralex@networld.to>
  * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
  * All Rights Reserved
  *
@@ -40,6 +40,7 @@ public class AttachmentHandler {
 	
 	public void printInformation() {
 		Iterator<?> iter = this.mesage.getAttachments();
+		System.err.println("Iter hasNext() = " + iter.hasNext());
 		while ( iter.hasNext() ) {
 			Object obj = iter.next();
 			System.err.println("AttachementHandler::printEPUBInformation(): " + obj);

@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2010 by Networld Project
  * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
- * Written by Alex Oberhauser <alexoberhauser@networld.to>
+ * Written by Alex Oberhauser <oberhauseralex@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify

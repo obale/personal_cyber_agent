@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2010 by Networld Project
  * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
- * Written by Alex Oberhauser <alexoberhauser@networld.to>
+ * Written by Alex Oberhauser <oberhauseralex@networld.to>
  * All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
@@ -119,12 +119,28 @@ public class MainSSLClient {
 		String password = config.getProperty("keystore.password");
 		
 		ICredential johnCredential = new Credential(pkcs12File, "johndoe", "johndoe", publicKeystoreFile, password);
+        
+		/**
+         * [BEGIN] Attachment Testing 
+         */
+//        InputStream inputStream = new FileInputStream(new File("/home/obale/FBooks/feedbooks.com/book/168.epub"));
+//		AttachmentPart attachment = message.createAttachmentPart();
+//		String base64String = Base64.encode(inputStream.toString().getBytes());
+//		InputStream base64Stream = new ByteArrayInputStream(base64String.getBytes());
+//		attachment.setBase64Content(base64Stream, "application/epub+zip");
+//		attachment.setRawContent(inputStream, "application/epub+zip");
+//		message.addAttachmentPart(attachment);
+        /**
+         * [END] Attachment Test
+         */
+        
 		message.saveChanges();
 		
 		secMessage.encryptSOAPMessage(encryptionPart , johnCredential, "rootca");
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		secMessage.printSOAPMessage(outputStream);
+		
 		return new String(outputStream.toByteArray());
 	}
 	

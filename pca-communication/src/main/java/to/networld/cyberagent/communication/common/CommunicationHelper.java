@@ -2,7 +2,7 @@
  * pca-communication - to.networld.cyberagent.communication.common
  *
  * Copyright (C) 2010 by Networld Project
- * Written by Alex Oberhauser <alexoberhauser@networld.to>
+ * Written by Alex Oberhauser <oberhauseralex@networld.to>
  * Written by Corneliu Valentin Stanciu <stanciucorneliu@networld.to>
  * All Rights Reserved
  *
